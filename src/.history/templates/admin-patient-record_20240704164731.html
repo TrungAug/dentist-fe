@@ -1,0 +1,147 @@
+<div class="vertical  dark ">
+  <div class="wrapper">
+    <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+    </nav>
+    <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+      data-simplebar>
+    </aside>
+    <main role="main" class="main-content" ng-controller="AdminPatientRecord">
+
+      <div class="d-flex flex-items-center flex-justify-between">
+        <h1 class="text-muted" id="history-pagehead">Lich sử điều trị</h1>
+      </div>
+      <div class="custom-hr"></div>
+      <div class="box mt-3">
+        <div class="box-header mb-3">
+          <div class="row align-items-center justify-content-end">
+            <div class="col-lg-3">
+              <select id="filterCustomer" class="form-control select2" ng-model="formPatientRecord.patientId"
+                ng-options="p.patientId as (p.fullName + (p.phoneNumber ? ' - ' + p.phoneNumber : '')) for p in listPatientDB" style="height: 40px;">
+              </select>
+            </div>
+            <div class="col-lg-3">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text" id="button-addon-date">
+                    <span class="fe fe-calendar fe-16"></span>
+                  </div>
+                </div>
+                <input type="text" class="form-control drgpickerSingle" id="dateFilterPatientRecord"
+                  ng-model="formPatientRecord.dateFilter" autocomplete="off" style="height: 40px;">
+              </div>
+            </div>      
+
+          </div>
+        </div>
+        <div class="box-content">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div class="card card-fill timeline">
+                <div class="card-header">
+                  <strong class="card-title">Recent Activity</strong>
+                  <a class="float-right small text-muted" href="#!">View all</a>
+                </div>
+                <div class="card-body">
+                  <h6 class="text-uppercase text-muted mb-4">04/07/2024</h6>
+                  <!-- <div class="pb-3 timeline-item item-primary">
+                    <div class="pl-5">
+                      <div class="mb-1"><strong>@Brown Asher</strong><span class="text-muted small mx-2">Just create new layout Index, form, table</span><strong>Tiny Admin</strong></div>
+                      <p class="small text-muted">Creative Design <span class="badge badge-light">1h ago</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="pb-3 timeline-item item-warning">
+                    <div class="pl-5">
+                      <div class="mb-3"><strong>@Hester Nissim</strong><span class="text-muted small mx-2">has upload new files to</span><strong>Tiny Admin</strong></div>
+                      <div class="row mb-3">
+                        <div class="col-1"><img src="./assets/products/p1.jpg" alt="..." class="img-fluid rounded"></div>
+                        <div class="col-1"><img src="./assets/products/p2.jpg" alt="..." class="img-fluid rounded"></div>
+                        <div class="col-1"><img src="./assets/products/p3.jpg" alt="..." class="img-fluid rounded"></div>
+                        <div class="col-1"><img src="./assets/products/p4.jpg" alt="..." class="img-fluid rounded"></div>
+                      </div>
+                      <p class="small text-muted">Front-End Development <span class="badge badge-light">1h ago</span>
+                      </p>
+                    </div>
+                  </div> -->
+                  <!-- <div class="pb-3 timeline-item item-success">
+                    <div class="pl-5">
+                      <div class="mb-3"><strong>@Kelley Sonya</strong><span class="text-muted small mx-2">has commented on</span><strong>Advanced table</strong></div>
+                      <div class="card d-inline-flex mb-2">
+                        <div class="card-body bg-light py-2 px-3"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim nulla eu quam cursus placerat. Vivamus non odio ullamcorper, lacinia ante nec, blandit leo. </div>
+                      </div>
+                      </p>
+                      <p class="small text-muted">Back-End Development <span class="badge badge-light">1h ago</span>
+                      </p>
+                    </div>
+                  </div> -->
+
+                  <div class="pb-3 timeline-item item-success">
+                    <div class="pl-5">
+                      <div class="mb-3"><strong>Khách hàng Đặng Hoàng Tuấn</strong><span class="text-muted small mx-2">đã "{{Staus cuộc hẹn}} cuộc hẹn"</span><strong>"{{ID cuộc hẹn}}"</strong></div>
+                      <div class="card d-inline-flex mb-2">
+                        <div class="card-body bg-light py-2 px-3"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim nulla eu quam cursus placerat. Vivamus non odio ullamcorper, lacinia ante nec, blandit leo. </div>
+                      </div>
+                      </p>
+                      <p class="small text-muted">Back-End Development <span class="badge badge-light">1h ago</span>
+                      </p>
+                    </div>
+                  </div>
+                  <!-- <h6 class="text-uppercase text-muted mb-4">Yesterday</h6>
+                  <div class="pb-3 timeline-item item-warning">
+                    <div class="pl-5">
+                      <div class="mb-3"><strong>@Fletcher Everett</strong><span class="text-muted small mx-2">created new group for</span><strong>Tiny Admin</strong></div>
+                      <ul class="avatars-list mb-3">
+                        <li>
+                          <a href="#!" class="avatar avatar-sm">
+                            <img alt="..." class="avatar-img rounded-circle" src="./assets/avatars/face-1.jpg">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#!" class="avatar avatar-sm">
+                            <img alt="..." class="avatar-img rounded-circle" src="./assets/avatars/face-4.jpg">
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#!" class="avatar avatar-sm">
+                            <img alt="..." class="avatar-img rounded-circle" src="./assets/avatars/face-3.jpg">
+                          </a>
+                        </li>
+                      </ul>
+                      <p class="small text-muted">Front-End Development <span class="badge badge-light">1h ago</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="pb-3 timeline-item item-success">
+                    <div class="pl-5">
+                      <div class="mb-3"><strong>@Bertha Ball</strong><span class="text-muted small mx-2">has commented on</span><strong>Advanced table</strong></div>
+                      <div class="card d-inline-flex mb-2">
+                        <div class="card-body bg-light py-2 px-3"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim nulla eu quam cursus placerat. Vivamus non odio ullamcorper, lacinia ante nec, blandit leo. </div>
+                      </div>
+                      </p>
+                      <p class="small text-muted">Back-End Development <span class="badge badge-light">1h ago</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="pb-3 timeline-item item-danger">
+                    <div class="pl-5">
+                      <div class="mb-3"><strong>@Lillith Joseph</strong><span class="text-muted small mx-2">has upload new files to</span><strong>Tiny Admin</strong></div>
+                      <div class="row mb-3">
+                        <div class="col-1"><img src="./assets/products/p4.jpg" alt="..." class="img-fluid rounded"></div>
+                        <div class="col-1"><img src="./assets/products/p1.jpg" alt="..." class="img-fluid rounded"></div>
+                        <div class="col-1"><img src="./assets/products/p2.jpg" alt="..." class="img-fluid rounded"></div>
+                      </div>
+                      <p class="small text-muted">Front-End Development <span class="badge badge-light">1h ago</span>
+                      </p>
+                    </div>
+                  </div> -->
+                </div> <!-- / .card-body -->
+              </div> <!-- / .card -->
+            </div> <!-- .col-12 -->
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-notify" ng-include="'component/admin-notify.html'"></div>
+    </main> <!-- main -->
+  </div>
+</div>

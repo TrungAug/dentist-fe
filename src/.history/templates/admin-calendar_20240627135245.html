@@ -1,0 +1,323 @@
+<div class="vertical  dark ">
+  <div class="wrapper">
+    <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+    </nav>
+    <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+      data-simplebar>
+    </aside>
+    <main role="main" class="main-content" ng-controller="AdminCalendar">
+
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <div class="card shadow">
+            <div class="card-body">
+              <button class="btn btn-primary mb-3" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseBookAppoinment" aria-expanded="false" aria-controls="collapseBookAppoinment">
+                Tạo lịch hẹn
+              </button>
+              <div class="collapse p-4 mb-5" id="collapseBookAppoinment"
+                style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px;">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <img src="/assets/images/bg/admin-calendar-bg.jpg" class="w-100" alt="">
+                  </div>
+                  <div class="col-lg-6">
+                      <div class="form-group mb-3">
+                        <label for="formDoctorUnavailabilityRequestDescription" class="col-form-label">Tiêu đề cuộc
+                          hẹn</label>
+                        <input type="text" class="form-control" id="formDoctorUnavailabilityRequestDescription"
+                          placeholder="14g - KH Đặng Hoàng Tuấn" ng-model="formDoctorUnavailabilityRequest.description">
+                      </div>
+
+                      <div class="form-group mb-3">
+                        <label for="formAppointmentPatientRecordRequestPatientId">Chọn bệnh nhân</label>
+                        <select id="formAppointmentPatientRecordRequestPatientId" class="form-control select2"
+                          ng-model="formAppointmentPatientRecordRequest.patientId"
+                          ng-options="p.patientId as (p.fullName + ' - ' + p.phoneNumber) for p in listPatientDB">
+                        </select>
+                      </div>
+
+                      <div class="form-group mb-3">
+                        <label for="formAppointmentRequestAppointmentType">Chọn loại cuộc hẹn</label>
+                        <select id="formAppointmentRequestAppointmentType" class="form-control select2"
+                          ng-model="formAppointmentRequest.appointmentType"
+                          ng-options="t.appointment_TypeId as t.typeName for t in listAppointmentTypeDB">
+                        </select>
+                      </div>
+
+                      <div class="form-group mb-3">
+                        <label for="date-input1">Ngày khám</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <div class="input-group-text" id="button-addon-date"><span
+                                class="fe fe-calendar fe-16"></span>
+                            </div>
+                          </div>
+                          <input type="text" class="form-control drgpicker" id="appointmentDateRequest"
+                            ng-model="formAppointmentRequest.appointmentDate" autocomplete="off">
+                        </div>
+                      </div>
+
+                      <div ng-if="doctorDB.length==0">
+                        <label class="text-danger"> Không có bác sĩ làm việc </label>
+                      </div>
+
+                      <div ng-repeat="d in doctorDB" class="accordion accordion-flush mb-3"
+                        id="accordionFlush-DoctorSchedule-{{d.doctorId}}">
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="flush-headingOne-DoctorSchedule-{{d.doctorId}}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                              data-bs-target="#flush-collapseOne-DoctorSchedule-{{d.doctorId}}" aria-expanded="false"
+                              aria-controls="flush-collapseOne-DoctorSchedule-{{d.doctorId}}">
+                              Bác sĩ {{d.fullName}}
+                            </button>
+                          </h2>
+                          <div id="flush-collapseOne-DoctorSchedule-{{d.doctorId}}" class="accordion-collapse collapse"
+                            aria-labelledby="flush-headingOne-DoctorSchedule-{{d.doctorId}}"
+                            data-bs-parent="#accordionFlush-DoctorSchedule-{{d.doctorId}}">
+                            <div class="accordion-body">
+                              <div class="accordion-body">
+                                <div class="d-flex flex-column align-items-start">
+                                  <ul class="nav nav-pills mb-3" id="pills-tab-{{d.doctorId}}" role="tablist">
+                                    <li class="nav-item" ng-repeat="s in shiftDB(d.doctorId)" role="presentation">
+                                      <button class="nav-link" ng-class="{active: isSelected(s.shiftId,d.doctorId)}"
+                                        ng-click="selectTab(s.shiftId,d.doctorId,$event)" id="pills-{{s.shiftId}}-{{d.doctorId}}-tab"
+                                        data-bs-toggle="pill" data-bs-target="#pills-{{s.shiftId}}-{{d.doctorId}}" type="button" role="tab"
+                                        aria-controls="pills-{{s.shiftId}}-{{d.doctorId}}" aria-selected="true">Ca {{s.name}}</button>
+                                    </li>
+                                  </ul>
+                                  <div class="tab-content overflow-auto custom-height" id="pills-tabContent-{{d.doctorId}}">
+                                    <div class="tab-pane fade" id="pills-{{s.shiftId}}-{{d.doctorId}}" role="tabpanel"
+                                      aria-labelledby="pills-{{s.shiftId}}-{{d.doctorId}}-tab"
+                                      ng-class="{ 'active show': isSelected(s.shiftId,d.doctorId) }">
+                                      <div ng-show="listTOS.length != 0" ng-repeat="tos in listTOS" class="custom-radio radio-checked me-3"
+                                        ng-if="isVisible(tos.beginTime)">
+                                        <label>
+                                          <input type="radio" name="timeOfShift" id="repeatRadioTOS-{{tos[1].timeOfShiftId}}"
+                                            ng-click="onChangeTimeOfShiftId(tos[1].timeOfShiftId)" ng-value="tos[1].timeOfShiftId">
+                                          <span>{{ tos[1].beginTime | firstFiveChars }} - {{ tos[1].endTime | firstFiveChars }}</span>
+                                        </label>
+                                      </div>
+                                      <div ng-show="allShiftsHidden()">
+                                        <label class="text-danger">Không có ca làm việc để hiển thị</label>
+                                      </div>
+                                    </div>
+                                  </div>
+                               
+                              <!-- <div class="d-flex align-items-start" ng-repeat="s in shiftDB(d.doctorId)">
+                                <div class="nav flex-column nav-pills me-3"
+                                  id="v-pills-tab-{{s.shiftId}}-{{d.doctorId}}" role="tablist"
+                                  aria-orientation="vertical">
+                                  <button class="btn btn-outline-primary" style="width: 150px;" class="nav-link"
+                                    ng-class="{active: isSelected(s.shiftId,d.doctorId)}"
+                                    ng-click="selectTab(s.shiftId,d.doctorId,$event)"
+                                    id="v-pills-{{s.shiftId}}-{{d.doctorId}}-tab" data-bs-toggle="pill"
+                                    data-bs-target="#v-pills-{{s.shiftId}}-{{d.doctorId}}" type="button" role="tab"
+                                    aria-controls="v-pills-{{s.shiftId}}-{{d.doctorId}}" aria-selected="true">Ca
+                                    {{s.name}}</button>
+                                </div>
+                                <div class="tab-content overflow-auto custom-height"
+                                  id="v-pills-tabContent-{{s.shiftId}}-{{d.doctorId}}">
+                                  <div class="tab-pane fade" id="v-pills-{{s.shiftId}}-{{d.doctorId}}" role="tabpanel"
+                                    aria-labelledby="v-pills-{{s.shiftId}}-{{d.doctorId}}-tab"
+                                    ng-class="{ 'active show': isSelected(s.shiftId,d.doctorId) }">
+                                    <div ng-show="listTOS.length != 0" ng-repeat="tos in listTOS"
+                                      class="custom-radio radio-checked me-3" ng-if="isVisible(tos.beginTime)">
+                                      <label>
+                                        <input type="radio" name="timeOfShift" id="repeatRadioTOS-{{tos[1].timeOfShiftId}}"
+                                          ng-click="onChangeTimeOfShiftId(tos[1].timeOfShiftId)"
+                                          ng-value="tos[1].timeOfShiftId">
+                                        <span>{{ tos[1].beginTime | firstFiveChars }} - {{ tos[1].endTime | firstFiveChars
+                                          }}</span>
+                                      </label>
+                                    </div>
+                                    <div ng-show="allShiftsHidden()">
+                                      <label class="text-danger">Không có ca làm việc để hiển thị</label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div> -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group mb-3">
+                        <label for="formAppointmentStatus">Trạng thái</label>
+                        <select id="formAppointmentStatus" class="form-control select2"
+                          ng-model="formAppointmentRequest.appointmentStatus"
+                          ng-options="t.appointment_StatusId as t.status for t in listAppointmentStatusBD" disabled>
+                        </select>
+                      </div>
+
+                      <div class="form-floating mb-3">
+                        <textarea ng-model="formAppointmentRequest.note" class="form-control"
+                          placeholder="Nhập triệu chứng" id="formAppointmentRequestNote"
+                          style="height: 100px"></textarea>
+                        <label for="formAppointmentRequestNote">Ghi chú</label>
+                      </div>
+                    </div>
+                </div>
+                <button type="button" class="btn mb-2 btn-success btn-create-appoinment"
+                  ng-click="saveAppointment()">Lưu
+                  lại</button>
+              </div>
+
+              <div id='calendar-book-appointment' class="custom-calendar-book-appointment"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event details -->
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventDetails"
+        id="btnEventDetails" hidden>
+        Xem chi tiết cuộc hẹn
+      </button>
+      <div class="modal fade" id="eventDetails" tabindex="-1" aria-labelledby="eventDetailsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="eventDetailsLabel">Chi tiết cuộc hẹn</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="eventDetailsBody">
+              <!-- Thông tin sự kiện -->
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" data-bs-dismiss="modal">Sửa cuộc hẹn</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Event details -->
+
+      <div class="modal fade modal-notif modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="defaultModalLabel">Notifications</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="list-group list-group-flush my-n3">
+                <div class="list-group-item bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <span class="fe fe-box fe-24"></span>
+                    </div>
+                    <div class="col">
+                      <small><strong>Package has uploaded successfull</strong></small>
+                      <div class="my-0 text-muted small">Package is zipped and uploaded</div>
+                      <small class="badge badge-pill badge-light text-muted">1m ago</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <span class="fe fe-download fe-24"></span>
+                    </div>
+                    <div class="col">
+                      <small><strong>Widgets are updated successfull</strong></small>
+                      <div class="my-0 text-muted small">Just create new layout Index, form, table</div>
+                      <small class="badge badge-pill badge-light text-muted">2m ago</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <span class="fe fe-inbox fe-24"></span>
+                    </div>
+                    <div class="col">
+                      <small><strong>Notifications have been sent</strong></small>
+                      <div class="my-0 text-muted small">Fusce dapibus, tellus ac cursus commodo</div>
+                      <small class="badge badge-pill badge-light text-muted">30m ago</small>
+                    </div>
+                  </div> <!-- / .row -->
+                </div>
+                <div class="list-group-item bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <span class="fe fe-link fe-24"></span>
+                    </div>
+                    <div class="col">
+                      <small><strong>Link was attached to menu</strong></small>
+                      <div class="my-0 text-muted small">New layout has been attached to the menu</div>
+                      <small class="badge badge-pill badge-light text-muted">1h ago</small>
+                    </div>
+                  </div>
+                </div> <!-- / .row -->
+              </div> <!-- / .list-group -->
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Clear All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade modal-shortcut modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="defaultModalLabel">Shortcuts</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body px-5">
+              <div class="row align-items-center">
+                <div class="col-6 text-center">
+                  <div class="squircle bg-success justify-content-center">
+                    <i class="fe fe-cpu fe-32 align-self-center text-white"></i>
+                  </div>
+                  <p>Control area</p>
+                </div>
+                <div class="col-6 text-center">
+                  <div class="squircle bg-primary justify-content-center">
+                    <i class="fe fe-activity fe-32 align-self-center text-white"></i>
+                  </div>
+                  <p>Activity</p>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div class="col-6 text-center">
+                  <div class="squircle bg-primary justify-content-center">
+                    <i class="fe fe-droplet fe-32 align-self-center text-white"></i>
+                  </div>
+                  <p>Droplet</p>
+                </div>
+                <div class="col-6 text-center">
+                  <div class="squircle bg-primary justify-content-center">
+                    <i class="fe fe-upload-cloud fe-32 align-self-center text-white"></i>
+                  </div>
+                  <p>Upload</p>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div class="col-6 text-center">
+                  <div class="squircle bg-primary justify-content-center">
+                    <i class="fe fe-users fe-32 align-self-center text-white"></i>
+                  </div>
+                  <p>Users</p>
+                </div>
+                <div class="col-6 text-center">
+                  <div class="squircle bg-primary justify-content-center">
+                    <i class="fe fe-settings fe-32 align-self-center text-white"></i>
+                  </div>
+                  <p>Settings</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main> <!-- main -->
+  </div>
+</div>

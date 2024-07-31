@@ -1,0 +1,184 @@
+<div class="vertical  dark ">
+  <div class="wrapper">
+    <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+    </nav>
+    <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+      data-simplebar>
+    </aside>
+    <main role="main" class="main-content" ng-controller="AdminPatientRecord">
+
+      <div class="d-flex flex-items-center flex-justify-between">
+        <h1 class="text-muted" id="history-pagehead">Lich sử điều trị</h1>
+      </div>
+      <div class="custom-hr"></div>
+      <div class="box mt-3">
+        <!-- <div class="box-header mb-3">
+          <div class="row align-items-center justify-content-end">
+            <div class="col-lg-3">
+              <select id="filterCustomer" class="form-control select2" ng-model="formPatientRecord.patientId"
+                ng-options="p.patientId as (p.fullName + (p.phoneNumber ? ' - ' + p.phoneNumber : '')) for p in listPatientDB"
+                style="height: 40px;">
+              </select>
+            </div>
+            <div class="col-lg-3">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text" id="button-addon-date">
+                    <span class="fe fe-calendar fe-16"></span>
+                  </div>
+                </div>
+                <input type="text" class="form-control drgpickerSingle" id="dateFilterPatientRecord"
+                  ng-model="formPatientRecord.dateFilter" autocomplete="off" style="height: 40px;">
+              </div>
+            </div>
+
+          </div>
+        </div> -->
+        <div class="box-content">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div class="card card-fill timeline">
+                <div class="card-header">
+                  <div class="box-header">
+                    <div class="d-flex justify-content-between mb-3">
+                      <div>
+                        <button type="button" class="btn btn-outline-primary p-2" ng-click="reFresh()">
+                          <i class="fe fe-refresh-ccw"></i>
+                          Làm mới
+                        </button>
+                      </div>
+                      <div class="appointment-pagination mb-2">
+                        <nav ng-include="'component/pagination.html'"></nav>
+                      </div>
+                    </div>
+                    <div class="row align-items-center justify-content-end">
+                      <div class="col-lg-3">
+                        <label for="filterDoctor">Chọn bác sĩ</label>
+                        <select id="filterDoctor" class="form-control select2-multi"
+                          ng-model="formPatientRecord.doctorId"
+                          ng-options="d.doctorId as d.fullName for d in listdoctorDB" style="height: 40px;">
+                        </select>
+                      </div>
+                      <div class="col-lg-3">
+                        <label for="filterPatient">Chọn bệnh nhân</label>
+                        <select id="filterPatient" class="form-control select2-multi"
+                          ng-model="formPatientRecord.patientId"
+                          ng-options="p.patientId as (p.fullName + (p.phoneNumber ? ' - ' + p.phoneNumber : '')) for p in listPatientDB"
+                          style="height: 40px;">
+                        </select>
+                      </div>
+                      <div class="col-lg-3">
+                        <label for="dateFilterPatientRecord">Chọn ngày</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <div class="input-group-text" id="button-addon-date">
+                              <span class="fe fe-calendar fe-16"></span>
+                            </div>
+                          </div>
+                          <input type="text" class="form-control drgpicker-filter-record" id="dateFilterPatientRecord"
+                            ng-model="formPatientRecord.dateFilter" autocomplete="off" style="height: 40px;">
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+
+                  <div ng-show="listAppGroupByDateDB.length==0" class="text-warning text-center">Không có dữ liệu hiển
+                    thị</div>
+
+                  <div class="appointment-content" ng-repeat="map in listAppGroupByDateDB |limitTo:pageSize:begin">
+                    <h6 class="text-uppercase text-muted mb-4 mt-4">{{map[0] | dateFormat}}</h6>
+                    <div class="pb-3 timeline-item" ng-repeat="app in map[1]" ng-class="
+                    {
+                      'item-confirmed': app.appointmentStatus.status=='Đã Xác Nhận',
+                      'item-completed': app.appointmentStatus.status=='Hoàn Thành',
+                      'item-progress': app.appointmentStatus.status=='Đang Diễn Ra',
+                      'item-canceled': app.appointmentStatus.status=='Đã Hủy',
+                      'item-noshow': app.appointmentStatus.status=='Không Đến',
+                      'item-rescheduled': app.appointmentStatus.status=='Hoãn',
+                      'item-booked': app.appointmentStatus.status=='Đã Đặt'
+                    }" style="border: 1px solid rgb(221, 215, 215); margin: 0; border-radius: 5px;">
+                      <div class="pl-5">
+                        <div class="mb-3">
+                          Khách hàng <strong>{{app.patient.fullName}}</strong>
+                          <span class="text-muted mx-2">đã
+                            {{app.appointmentStatus.status}} cuộc hẹn</span>
+                          <strong>{{app.appointmentId}}</strong>
+                          <button class="float-right btn btn-outline-primary" href="#!" style="margin: 5px;"
+                            ng-click="showDetail(app)">Xem chi
+                            tiết</button>
+                          <button id="btn-paintient-record-details" class="float-right btn btn-outline-primary"
+                            href="#!" style="margin: 5px;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetails"
+                            aria-controls="offcanvasDetails" hidden>Xem chi tiết</button>
+                          <div style="height: 90vh;" class="offcanvas offcanvas-bottom" tabindex="-1"
+                            id="offcanvasDetails" aria-labelledby="offcanvasBottomLabel">
+                            <div class="offcanvas-header">
+                              <h5 class="offcanvas-title" id="offcanvasBottomLabel">Xem chi tiết bệnh án</h5>
+                              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body small">
+                              <ul class="nav nav-tabs nav-justified mb-3">
+                                <li class="nav-item">
+                                  <a class="nav-link" ng-class="{active: isSelected(-1)}"
+                                    ng-click="selectTab(-1,$event)" href="#">Thông tin bệnh nhân</a>
+                                </li>
+                                <li class="nav-item">
+                                  <a class="nav-link" ng-class="{active: isSelected(-2)}"
+                                    ng-click="selectTab(-2,$event)" href="#">Xem hóa đơn</a>
+                                </li>
+                                <li class="nav-item">
+                                  <a class="nav-link" ng-class="{active: isSelected(-3)}"
+                                    ng-click="selectTab(-3,$event)" href="#">Lịch sử khám</a>
+                                </li>
+                                <div class="tab-content">
+                                  <div class="tab-pane" ng-class="{ 'active show': isSelected(-1) }">
+                                    thông tin
+                                  </div>
+                                  <div class="tab-pane" ng-class="{ 'active show': isSelected(-2) }">
+                                    Hóa đơn
+                                  </div>
+                                  <div class="tab-pane" ng-class="{ 'active show': isSelected(-2) }">
+                                    Lịch sử
+                                  </div>
+                                </div>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="card d-inline-flex mb-2">
+                          <div class="card-body bg-light py-2 px-3">
+                            Khách hàng đã điệu trị các vấn đề
+                            <strong>{{app.appointmentPatientRecord.currentCodition}}</strong>
+                          </div>
+                        </div>
+                        </p>
+                        <p class="text-muted">Bác sĩ điều trị: {{app.doctor.fullName}}
+                          <span class="badge badge-light">Hẹn tái khám:
+                            {{app.appointmentPatientRecord.reExamination}}</span>
+                        </p>
+
+                      </div>
+                    </div>
+                    <!-- <div class="custom-hr mt-3"></div> -->
+                  </div>
+
+                  <div class="appointment-pagination mt-3 d-flex justify-content-center">
+                    <nav ng-include="'component/pagination.html'"></nav>
+                  </div>
+
+                </div> <!-- / .card-body -->
+              </div> <!-- / .card -->
+            </div> <!-- .col-12 -->
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="admin-notify" ng-include="'component/admin-notify.html'"></div>
+    </main> <!-- main -->
+  </div>
+</div>

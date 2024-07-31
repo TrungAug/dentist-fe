@@ -1,0 +1,54 @@
+.custom-hr {
+    margin-left: -16px;
+    margin-right: -16px;
+    display: block;
+    height: 1px;
+    background-color: var(--borderColor-default, var(--color-border-default, #d0d7de));
+    margin-top: 0px;
+}
+
+.btn-all-customer{
+    width: 200px;
+    height: 35px;
+    border-radius: 5px;
+    border-color: #ebedf0;
+    margin-right: 10px;
+}
+
+.btn-all-time{
+    width: 180px;
+    height: 35px;
+    border-radius: 5px;
+    border-color: #ebedf0;
+}
+.button-text{
+    margin: 0 5px;;
+}
+
+.timeline .timeline-item.item-booked::before {
+    background-color: rgba(158, 234, 16, 0.7) !important;
+}
+
+.timeline .timeline-item.item-confirmed::before {
+    background-color: rgba(92, 184, 92, 0.7) !important;
+}
+
+.timeline .timeline-item.item-progress::before {
+    background-color: rgba(0, 123, 255, 0.7) !important;
+}
+
+.timeline .timeline-item.item-completed::before {
+    background-color: rgb(26 6 244) !important;
+}
+
+.timeline .timeline-item.item-canceled::before {
+    background-color: rgba(217, 83, 79, 0.7) !important;
+}
+
+.timeline .timeline-item.item-noshow::before {
+    background-color: rgba(240, 173, 78, 0.7) !important;
+}
+
+.timeline .timeline-item.item-rescheduled::before {
+    background-color: rgba(255, 193, 7, 0.7) !important;
+}

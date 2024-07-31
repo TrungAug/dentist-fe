@@ -1,0 +1,185 @@
+<div class="row justify-content-center mb-3">
+    <div class="d-flex flex-items-center flex-justify-between" id="div-register-appointment"
+      data-bs-toggle="collapse" data-bs-target="#collapse-form-register-appointment" aria-expanded="false"
+      aria-controls="collapse-form-register-appointment">
+      <h3 class="text-muted" id="history-pagehead">Đăng ký lịch hẹn
+      </h3>
+    </div>
+    <div class="custom-hr mb-3"></div>
+    <div class="row form-booking-appointment p-3 collapse" id="collapse-form-register-appointment">
+      <div class="information mb-3" ng-show="isSelectCalendar">
+        <button type="button" class="btn btn-outline-danger p-1"
+        ng-click="reSelect()">
+          <i class="bi bi-arrow-clockwise"></i>
+          Chọn lại
+        </button>
+        <p class="text-muted" style="padding-left: 3px;">Đăng ký cuộc hẹn ngày
+          <span class="text-primary">{{formApp.appointmentDate}}. </span>
+          Bác sĩ <span class="text-primary">{{formApp.fullName}}. </span>
+          Thời gian từ <span class="text-primary">{{formApp.startTime|timeFormat}}</span> đến <span
+            class="text-primary">{{formApp.endTime|timeFormat}}</span>
+        </p>        
+      </div>
+      <div class="col-6 form-booking-appointment-col-one">
+        <div class="form-group mb-3">
+          <label for="dental-issues">Nhập triệu chứng</label>
+          <select id="dental-issues" class="form-control select2-multi" ng-model="formApp.dentalIssuesId"
+            ng-options="ds.dentalIssuesId as ds.name for ds in listDentalIssueDB">
+          </select>
+        </div>
+        <div ng-show="isShowService()" style="height: 250px;" class="overflow-auto mb-3">
+          <table class="table table-hover" style="cursor: pointer;">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" id="selectAll" ng-click="toggleAll()">
+                </th>
+                <th>ID</th>
+                <th>Tên dịch vụ</th>
+                <th>Giá</th>
+                <th>Thời lượng</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="s in listServiceByDentalIssuesDB" ng-click="toggleCheckbox($event, s)">
+                <td>
+                  <input type="checkbox" ng-model="s.checked" ng-change="updateSelectedServices(s)"
+                    ng-click="$event.stopPropagation()">
+                </td>
+                <td>{{s.serviceId}}</td>
+                <td>{{s.serviceName}}</td>
+                <td>{{s.price|formatPrice}}</td>
+                <td>{{s.timeEstimate}} phút</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- <div ng-show="isContinueShow()" class="card d-inline-flex mb-3 w-100"
+          style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px;">
+          <div class="card-body bg-light text-warning p-3">
+            <p class="small m-0">Tổng số tiền dịch vụ đã chọn: {{getTotalPrice()|formatPrice}} </p>
+            <p class="small m-0">Thời lượng sử dụng dịch vụ: {{getTotalTime()}} phút</p>
+            <p class="small m-0" ng-show="getRecommendation()!=0">Số khung thời gian khuyến nghị:
+              {{getRecommendation()}}</p>
+            <p class="small m-0" ng-show="getRecommendation()==0">Bạn cần liên hệ trực tiếp nhân viên để được hướng
+              dẫn kỹ hơn</p>
+            <p class="small text-danger m-0">Lưu ý (*): Khung thời gian khám nên chọn liên tục để tránh làm gián
+              đoạn việc điều trị !</p>
+          </div>
+        </div> -->
+        <div class="continue-book-appoinment float-right" ng-show="isContinueShow()">
+          <a href="#" class="text-primary" ng-click="isShowFormRegister($event)" ng-hide="disableContinue"
+            ng-class="{'text-muted': disableContinue, 'text-primary': !disableContinue}">>>Tiếp tục</a>
+        </div>
+      </div>
+      <!-- start col two -->
+      <div class="col-6 form-booking-appointment-col-two" ng-show="showFormRegister"
+        style="border-left: 1px solid grey;">
+
+        <div class="form-group mb-3">
+          <label for="appointmentTitle" class="col-form-label">Tiêu đề cuộc
+            hẹn</label>
+          <input type="text" class="form-control" id="appointmentTitle" ng-model="formApp.title" autocomplete="off">
+        </div>
+
+        <div class="form-group mb-3" ng-show="!isSelectCalendar">
+          <label for="date-input1">Ngày khám</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text" id="button-addon-date"><span class="fe fe-calendar fe-16"></span>
+              </div>
+            </div>
+            <input type="text" class="form-control drgpicker" id="appointmentDateRequest"
+              ng-model="formApp.appointmentDate" autocomplete="off">
+          </div>
+        </div>
+
+        <div ng-if="doctorDB.length==0">
+          <label class="text-danger"> Không có bác sĩ làm việc </label>
+        </div>
+
+        <div ng-repeat="d in doctorDB" class="accordion accordion-flush mb-3"
+          id="accordionFlush-DoctorSchedule-{{d.doctorId}}" ng-show="!isSelectCalendar">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingOne-DoctorSchedule-{{d.doctorId}}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseOne-DoctorSchedule-{{d.doctorId}}" aria-expanded="false"
+                aria-controls="flush-collapseOne-DoctorSchedule-{{d.doctorId}}">
+                Bác sĩ {{d.fullName}}
+              </button>
+            </h2>
+            <div id="flush-collapseOne-DoctorSchedule-{{d.doctorId}}" class="accordion-collapse collapse"
+              aria-labelledby="flush-headingOne-DoctorSchedule-{{d.doctorId}}"
+              data-bs-parent="#accordionFlush-DoctorSchedule-{{d.doctorId}}">
+              <div class="accordion-body">
+                <div class="d-flex flex-column align-items-start">
+                  <ul class="nav nav-pills mb-3" id="pills-tab-{{d.doctorId}}" role="tablist">
+                    <li class="nav-item" ng-repeat="s in shiftDB(d.doctorId)" role="presentation">
+                      <button class="nav-link" id="pills-{{s.shiftId}}-{{d.doctorId}}-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-{{s.shiftId}}-{{d.doctorId}}" type="button" role="tab"
+                        aria-controls="pills-{{s.shiftId}}-{{d.doctorId}}" aria-selected="false"
+                        ng-class="{active: isSelected(s.shiftId,d.doctorId)}"
+                        ng-click="selectTab(s.shiftId,d.doctorId,$event)">{{s.name}}</button>
+                    </li>
+                  </ul>
+                  <div class="tab-content" id="pills-tabContent-{{d.doctorId}}">
+                    <div class="tab-pane fade" ng-repeat="s in shiftDB(d.doctorId)"
+                      id="pills-{{s.shiftId}}-{{d.doctorId}}" role="tabpanel"
+                      aria-labelledby="pills-{{s.shiftId}}-{{d.doctorId}}-tab"
+                      ng-class="{ 'active show': isSelected(s.shiftId,d.doctorId) }">
+
+                      <div class="row overflow-auto" style="height: 150px;">
+                        <div class="col-6" ng-show="listTOS.length != 0" ng-repeat="tos in listTOS">
+                          <div class="custom-checkbox checbox-checked me-3"
+                            ng-class="{ 'valid-shift': isTimeLess(tos[1]) || !isShiftAvailable(tos[1].timeOfShiftId) }">
+                            <label>
+                              <input type="checkbox" id="repeatCheckTOS-{{tos[1].timeOfShiftId}}"
+                                ng-change="onChangeTimeOfShift(tos[1])" ng-model="tos[1].checked" ng-value="tos[1]"
+                                ng-disabled="!isShiftAvailable(tos[1].timeOfShiftId) || isTimeLess(tos[1])">
+                              <span>{{ tos[1].beginTime | firstFiveChars }} - {{ tos[1].endTime |
+                                firstFiveChars
+                                }}</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div ng-show="listTOS.length === 0">
+                        <label class="text-danger">Không có ca làm việc để hiển thị</label>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="appointmentType">Chọn loại cuộc hẹn</label>
+          <select id="appointmentType" class="form-control select2" ng-model="formApp.appointmentTypeId"
+            ng-options="t.appointment_TypeId as t.typeName for t in listAppointmentTypeDB">
+          </select>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="appointmentPatient">Chọn bệnh nhân</label>
+          <select id="appointmentPatient" class="form-control select2" ng-model="formApp.patientId"
+            ng-options="p.patientId as (p.fullName + ' - ' + p.phoneNumber) for p in listPatientDB">
+          </select>
+        </div>
+
+        <div class="form-group mb-3" ng-show="isUpdate">
+          <label for="appointmentStatus">Trạng thái</label>
+          <select id="appointmentStatus" class="form-control select2" ng-model="formApp.appointmentStatus"
+            ng-options="t.appointment_StatusId as t.status for t in listAppointmentStatusBD">
+          </select>
+        </div>
+
+        <button type="button" class="btn mb-2 btn-success btn-create-appoinment" ng-click="saveAppointment()">Đăng ký</button>          
+      </div>
+      <!-- end col two -->
+
+    </div>
+  </div>

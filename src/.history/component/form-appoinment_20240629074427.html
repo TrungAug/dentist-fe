@@ -1,0 +1,103 @@
+<div class="form-group mb-3">
+    <label for="date-input1">Ngày khám</label>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <div class="input-group-text" id="button-addon-date"><span class="fe fe-calendar fe-16"></span>
+            </div>
+        </div>
+        <input type="text" class="form-control drgpicker" id="appointmentDateRequest"
+            ng-model="formAppointmentRequest.appointmentDate" autocomplete="off">
+    </div>
+</div>
+
+<div ng-if="doctorDB.length==0">
+    <label class="text-danger"> Không có bác sĩ làm việc </label>
+</div>
+
+<div ng-repeat="d in doctorDB" class="accordion accordion-flush mb-3" id="accordionFlush-DoctorSchedule-{{d.doctorId}}">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingOne-DoctorSchedule-{{d.doctorId}}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseOne-DoctorSchedule-{{d.doctorId}}" aria-expanded="false"
+                aria-controls="flush-collapseOne-DoctorSchedule-{{d.doctorId}}">
+                Bác sĩ {{d.fullName}}
+            </button>
+        </h2>
+        <div id="flush-collapseOne-DoctorSchedule-{{d.doctorId}}" class="accordion-collapse collapse"
+            aria-labelledby="flush-headingOne-DoctorSchedule-{{d.doctorId}}"
+            data-bs-parent="#accordionFlush-DoctorSchedule-{{d.doctorId}}">
+            <div class="accordion-body">
+                <div class="d-flex flex-column align-items-start">
+                    <ul class="nav nav-pills mb-3" id="pills-tab-{{d.doctorId}}" role="tablist">
+                        <li class="nav-item" ng-repeat="s in shiftDB(d.doctorId)" role="presentation">
+                            <button class="nav-link" id="pills-{{s.shiftId}}-{{d.doctorId}}-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-{{s.shiftId}}-{{d.doctorId}}" type="button" role="tab"
+                                aria-controls="pills-{{s.shiftId}}-{{d.doctorId}}" aria-selected="false"
+                                ng-class="{active: isSelected(s.shiftId,d.doctorId)}"
+                                ng-click="selectTab(s.shiftId,d.doctorId,$event)">{{s.name}}</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent-{{d.doctorId}}">
+                        <div class="tab-pane fade" ng-repeat="s in shiftDB(d.doctorId)"
+                            id="pills-{{s.shiftId}}-{{d.doctorId}}" role="tabpanel"
+                            aria-labelledby="pills-{{s.shiftId}}-{{d.doctorId}}-tab"
+                            ng-class="{ 'active show': isSelected(s.shiftId,d.doctorId) }">
+                            <div ng-show="listTOS.length != 0" ng-repeat="tos in listTOS"
+                                class="custom-radio radio-checked me-3">
+                                <label>
+                                    <input type="radio" name="timeOfShift" id="repeatRadioTOS-{{tos[1].timeOfShiftId}}"
+                                        ng-click="onChangeTimeOfShiftId(tos[1].timeOfShiftId)"
+                                        ng-value="tos[1].timeOfShiftId">
+                                    <span>{{ tos[1].beginTime | firstFiveChars }} - {{ tos[1].endTime | firstFiveChars
+                                        }}</span>
+                                </label>
+                            </div>
+                            <div ng-show="listTOS.length === 0">
+                                <label class="text-danger">Không có ca làm việc để hiển thị</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="p-3 mb-3" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px;">
+    <div class="form-group mb-3">
+        <label for="formDoctorUnavailabilityRequestDescription" class="col-form-label">Tiêu đề cuộc
+            hẹn</label>
+        <input type="text" class="form-control" id="formDoctorUnavailabilityRequestDescription"
+            placeholder="14g - KH Đặng Hoàng Tuấn" ng-model="formDoctorUnavailabilityRequest.description">
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="formAppointmentPatientRecordRequestPatientId">Chọn bệnh nhân</label>
+        <select id="formAppointmentPatientRecordRequestPatientId" class="form-control select2"
+            ng-model="formAppointmentPatientRecordRequest.patientId"
+            ng-options="p.patientId as (p.fullName + ' - ' + p.phoneNumber) for p in listPatientDB">
+        </select>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="formAppointmentRequestAppointmentType">Chọn loại cuộc hẹn</label>
+        <select id="formAppointmentRequestAppointmentType" class="form-control select2"
+            ng-model="formAppointmentRequest.appointmentType"
+            ng-options="t.appointment_TypeId as t.typeName for t in listAppointmentTypeDB">
+        </select>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="formAppointmentStatus">Trạng thái</label>
+        <select id="formAppointmentStatus" class="form-control select2"
+            ng-model="formAppointmentRequest.appointmentStatus"
+            ng-options="t.appointment_StatusId as t.status for t in listAppointmentStatusBD" disabled>
+        </select>
+    </div>
+
+    <div class="form-floating mb-3">
+        <textarea ng-model="formAppointmentRequest.note" class="form-control" placeholder="Nhập triệu chứng"
+            id="formAppointmentRequestNote" style="height: 100px"></textarea>
+        <label for="formAppointmentRequestNote">Ghi chú</label>
+    </div>
+</div>

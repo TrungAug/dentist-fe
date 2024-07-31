@@ -1,0 +1,291 @@
+<div class="vertical  dark ">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+        </nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar>
+        </aside>
+        <main role="main" class="main-content" ng-controller="AdminListService">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <h2 class="mb-2 p-0 page-title">Danh sách dịch vụ nha khoa</h2>
+                        <p class="card-text"></p>
+                        <div class="row my-4">
+                            <!-- Small table -->
+                            <div class="col-md-12">
+                                <div class="row align-items-center my-3">
+                                    <div class="col">
+                                        <!-- <h2 class="page-title p-0">Đặt lịch</h2> -->
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-success" ng-click="listServiceInfo()">
+                                            <span  class="fe fe-plus fe-16 mr-3"></span>
+                                            Làm mới dữ liệu
+                                        </button>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            data-target="#serviceModal" ng-click="modalMode(1)"><span
+                                                class="fe fe-plus fe-16 mr-3"></span>Thêm
+                                            dịch vụ</button>
+                                    </div>
+                                </div>
+                                <div class="card shadow">
+                                    <div class="card-body">
+                                        <!-- table -->
+                                        <table class="table datatables" id="dataTable-list-service">
+                                            <thead>
+                                                <tr>
+                                                    <!-- <th></th> -->
+                                                    <th>Mã dịch vụ</th>
+                                                    <th>Tên dịch vụ</th>
+                                                    <th>Giá</th>
+                                                    <th>Loại</th>
+                                                    <th>Thời gian thực hiện</th>
+                                                    <th>Mô tả</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="s in listServiceFromDB">
+                                                    <!-- <td>
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" id="checkbox{{s.serviceId}}">
+                                                            <label class="custom-control-label" for="checkbox{{s.serviceId}}"></label>
+                                                        </div>
+                                                    </td> -->
+                                                    <td>{{s.serviceId}}</td>
+                                                    <td>{{s.serviceName}}</td>
+                                                    <td>{{s.price | formatPrice}}</td>
+                                                    <td>{{s.serviceType.typeName}}</td>
+                                                    <td>{{s.timeEstimate}} phút</td>
+                                                    <td>{{s.description}}</td>
+                                                    <td>{{s.deleted?'Ngừng hoạt động':'Đang hoạt động'}}</td>
+                                                    <td><button class="btn btn-sm dropdown-toggle more-horizontal"
+                                                            type="button" data-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
+                                                            <span class="text white">...</span>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <!-- <a class="dropdown-item text-success"  href="#">Sửa</a> -->
+                                                            <!-- <a class="dropdown-item text-danger" href="#">Xóa</a>
+                                                            <a class="dropdown-item text-primary" href="#">Cập nhật</a> -->
+                                                            <button type="button" class="btn btn-primary"
+                                                                data-toggle="modal" data-target="#serviceModal"
+                                                                ng-click="modalMode(2)"><span
+                                                                    class="fe fe-plus fe-16 mr-3"></span>Cập
+                                                                nhật</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div> <!-- simple table -->
+                        </div> <!-- end section -->
+                    </div> <!-- .col-12 -->
+                </div> <!-- .row -->
+            </div> <!-- .container-fluid -->
+            <!-- Modal -->
+            <!-- new service modal -->
+            <div class="modal fade" id="serviceModal" tabindex="-1" role="dialog" aria-labelledby="serviceModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="varyModalLabel">{{viewMode==1?'Thêm dịch vụ mới':'Cập nhật dịch vụ'}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <!-- <form> -->
+                            <div class="form-group" ng-show="viewMode==2">                             
+                                <input type="text" class="form-control" id="serviceID"  ng-model="formService.serviceID" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="serviceName" class="col-form-label">Tên dịch vụ</label>
+                                <input type="text" class="form-control" id="serviceName" placeholder="Nhập Tên dịch vụ"
+                                    ng-model="formService.serviceName">
+                            </div>
+                            <div class="form-group">
+                                <label for="price" class="col-form-label">Giá dịch vụ</label>
+                                <input type="number" min="0" class="form-control" id="price"
+                                    placeholder="Nhập giá dịch vụ" ng-model="formService.price">
+                            </div>
+                            <div class="form-group">
+                                <label for="timeEstimate" class="col-form-label">Thời gian ước lượng (phút)</label>
+                                <input type="number" min="0" class="form-control" id="timeEstimate"
+                                    placeholder="Nhập thời gian " ng-model="formService.timeEstimate">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-8">
+                                    <label for="serviceTypeId">Loại dịch vụ</label>
+                                    <select id="serviceTypeId" class="form-control select2"
+                                        ng-model="formService.serviceTypeId"
+                                        ng-options="type.service_TypeId as type.typeName for type in listServiceTypeDB">
+                                        <option value="" disabled selected>Chọn loại dịch vụ</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="description" class="col-form-label">Mô tả</label>
+                                <textarea class="form-control" id="description" placeholder="Nhập mô tả"
+                                    ng-model="formService.description"></textarea>
+                            </div>
+                            <!-- </form> -->
+                        </div>
+                        <div class="modal-footer d-flex justify-content-arround">
+                            <button type="button" class="btn mb-2 btn-info" ng-show="viewMode == 1"
+                                ng-click="resetForm()">Làm mới</button>
+                            <button type="button" class="btn mb-2 btn-success" ng-show="viewMode == 1"
+                                ng-click="createService()">Thêm mới</button>
+                            <button type="button" class="btn mb-2 btn-primary" ng-show="viewMode == 2"
+                                ng-click="updateService()">Lưu lại</button>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- new service modal -->
+
+
+
+
+
+
+
+            <div class="modal fade modal-notif modal-slide" tabindex="-1" role="dialog"
+                aria-labelledby="defaultModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="defaultModalLabel">Notifications</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="list-group list-group-flush my-n3">
+                                <div class="list-group-item bg-transparent">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-box fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small><strong>Package has uploaded successfull</strong></small>
+                                            <div class="my-0 text-muted small">Package is zipped and uploaded</div>
+                                            <small class="badge badge-pill badge-light text-muted">1m ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item bg-transparent">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-download fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small><strong>Widgets are updated successfull</strong></small>
+                                            <div class="my-0 text-muted small">Just create new layout Index, form, table
+                                            </div>
+                                            <small class="badge badge-pill badge-light text-muted">2m ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item bg-transparent">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-inbox fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small><strong>Notifications have been sent</strong></small>
+                                            <div class="my-0 text-muted small">Fusce dapibus, tellus ac cursus commodo
+                                            </div>
+                                            <small class="badge badge-pill badge-light text-muted">30m ago</small>
+                                        </div>
+                                    </div> <!-- / .row -->
+                                </div>
+                                <div class="list-group-item bg-transparent">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-link fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small><strong>Link was attached to menu</strong></small>
+                                            <div class="my-0 text-muted small">New layout has been attached to the menu
+                                            </div>
+                                            <small class="badge badge-pill badge-light text-muted">1h ago</small>
+                                        </div>
+                                    </div>
+                                </div> <!-- / .row -->
+                            </div> <!-- / .list-group -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Clear
+                                All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade modal-shortcut modal-slide" tabindex="-1" role="dialog"
+                aria-labelledby="defaultModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="defaultModalLabel">Shortcuts</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body px-5">
+                            <div class="row align-items-center">
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-success justify-content-center">
+                                        <i class="fe fe-cpu fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Control area</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-activity fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Activity</p>
+                                </div>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-droplet fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Droplet</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-upload-cloud fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Upload</p>
+                                </div>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-users fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Users</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-settings fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Settings</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>

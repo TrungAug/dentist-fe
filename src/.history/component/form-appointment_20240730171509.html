@@ -1,0 +1,283 @@
+<div class="row justify-content-center mb-3">
+  <div class="row form-booking-appointment p-3">
+    <div class="information mb-3">
+      <p class="text-muted">Cập nhật cuộc hẹn ngày
+        <span class="text-primary">{{originalDate}}. </span>
+        Bác sĩ <span class="text-primary">{{formUpApp.fullName}}. </span>
+        Thời gian từ <span class="text-primary">{{formUpApp.startTime|timeFormat}}</span> đến <span
+          class="text-primary">{{formUpApp.endTime|timeFormat}}</span>
+      </p>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col form-booking-appointment-col-two">
+        <div class="form-group mb-3">
+          <label for="date-input1">Ngày khám</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text" id="button-addon-date"><span class="fe fe-calendar fe-16"></span>
+              </div>
+            </div>
+            <input type="text" class="form-control drgpicker-up" id="appointmentDateUp"
+              ng-model="formUpApp.appointmentDate" autocomplete="off"
+              ng-disabled="!validDateEvent||isDisabledStatus('')">
+          </div>
+        </div>
+
+        <div ng-if="doctorDB.length==0">
+          <label class="text-danger"> Không có bác sĩ làm việc </label>
+        </div>
+
+        <div ng-repeat="d in doctorDB" class="accordion accordion-flush mb-3"
+          id="accordionFlush-DoctorSchedule-{{d.doctorId}}">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingOne-DoctorSchedule-{{d.doctorId}}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseOne-DoctorSchedule-{{d.doctorId}}" aria-expanded="false"
+                aria-controls="flush-collapseOne-DoctorSchedule-{{d.doctorId}}">
+                Bác sĩ {{d.fullName}}
+              </button>
+            </h2>
+            <div id="flush-collapseOne-DoctorSchedule-{{d.doctorId}}" class="accordion-collapse collapse"
+              aria-labelledby="flush-headingOne-DoctorSchedule-{{d.doctorId}}"
+              data-bs-parent="#accordionFlush-DoctorSchedule-{{d.doctorId}}">
+              <div class="accordion-body">
+                <div class="d-flex flex-column align-items-start">
+                  <ul class="nav nav-pills mb-3" id="pills-tab-{{d.doctorId}}" role="tablist">
+                    <li class="nav-item" ng-repeat="s in shiftDB(d.doctorId)" role="presentation">
+                      <button class="nav-link" id="pills-{{s.shiftId}}-{{d.doctorId}}-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-{{s.shiftId}}-{{d.doctorId}}" type="button" role="tab"
+                        aria-controls="pills-{{s.shiftId}}-{{d.doctorId}}" aria-selected="false"
+                        ng-class="{active: isSelected(s.shiftId,d.doctorId)}"
+                        ng-click="selectTab(s.shiftId,d.doctorId,$event,true)">{{s.name}}</button>
+                    </li>
+                  </ul>
+                  <div class="tab-content" id="pills-tabContent-{{d.doctorId}}">
+                    <div class="tab-pane fade" ng-repeat="s in shiftDB(d.doctorId)"
+                      id="pills-{{s.shiftId}}-{{d.doctorId}}" role="tabpanel"
+                      aria-labelledby="pills-{{s.shiftId}}-{{d.doctorId}}-tab"
+                      ng-class="{ 'active show': isSelected(s.shiftId,d.doctorId) }">
+
+                      <div class="row overflow-auto" style="height: 150px;">
+                        <div class="col-3" ng-show="listTOS.length != 0" ng-repeat="tos in listTOS">
+                          <div
+                            class="custom-checkbox checbox-checked me-3 {{isCheckTos(tos[1].timeOfShiftId,d.doctorId)?'valid-shift-appointment':''}}"
+                            ng-class="{ 'valid-shift': isTimeLess(tos[1],true)&&!isCheckTos(tos[1].timeOfShiftId,d.doctorId) || !isShiftAvailable(tos[1].timeOfShiftId)&&!isCheckTos(tos[1].timeOfShiftId,d.doctorId) }">
+                            <label>
+                              <input type="checkbox" id="repeatCheckTOS-{{tos[1].timeOfShiftId}}"
+                                ng-change="onChangeTimeOfShift(tos[1],true,d.doctorId)" ng-model="tos[1].checked"
+                                ng-value="tos[1]"
+                                ng-disabled="!isShiftAvailable(tos[1].timeOfShiftId)&&!isCheckTos(tos[1].timeOfShiftId,d.doctorId) || isTimeLess(tos[1],true)&&!isCheckTos(tos[1].timeOfShiftId,d.doctorId) || !validDateEvent&&!isCheckTos(tos[1].timeOfShiftId,d.doctorId)">
+                              <span>{{ tos[1].beginTime | firstFiveChars }} - {{ tos[1].endTime |
+                                firstFiveChars
+                                }}
+                              </span>
+
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div ng-show="listTOS.length === 0">
+                        <label class="text-danger">Không có ca làm việc để hiển thị</label>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div ng-class="{'disabled-div': !showNextStepUp&&validDateEvent || isDisabledStatus('')}">
+          <div class="form-group mb-3">
+            <label for="appointmentPatientUp">Chọn bệnh nhân</label>
+            <select id="appointmentPatientUp" class="form-control select2" ng-model="formUpApp.patientId"
+              ng-options="p.patientId as (p.fullName + ' - ' + p.phoneNumber) for p in listPatientDB">
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="appointmentStatusUp">Trạng thái</label>
+            <select id="appointmentStatusUp" class="form-control select2" ng-model="formUpApp.appointmentStatus"
+              ng-options="t.appointment_StatusId as t.status for t in listAppointmentStatusBD"
+              ng-disabled="isDisabledStatus('')">
+            </select>
+          </div>
+        </div>
+        <!-- end col two -->
+
+      </div>
+    </div>
+
+    <div ng-show="isShowFormResult">
+      <div class="row mb-3" ng-class="{'disabled-div': !isShowFormResult}">
+        <div class="col form-booking-appointment-col-one">
+
+          <div class="custom-control custom-switch mb-4">
+            <input type="checkbox" class="custom-control-input" id="IsSelectServiceUp" ng-model="isSelectByServiceUp"
+              ng-checked="isSelectByServiceUp">
+            <label class="custom-control-label" for="IsSelectServiceUp">Chọn dịch vụ</label>
+          </div>
+
+          <div ng-show="!isSelectByServiceUp">
+            <div class="form-group mb-3">
+              <label for="dental-issuesUp">Nhập triệu chứng</label>
+              <select id="dental-issuesUp" class="form-control select2-multi-up" ng-model="formUpApp.dentalIssuesId"
+                ng-options="ds.dentalIssuesId as ds.name for ds in listDentalIssueDBUp">
+              </select>
+            </div>
+
+            <div ng-show="isShowService(true)" style="height: 250px;" class="overflow-auto mb-3">
+              <table class="table table-hover" style="cursor: pointer;">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>ID</th>
+                    <th>Tên dịch vụ</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thời lượng</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="s in listServiceByDentalIssuesDBUp" ng-click="toggleCheckbox($event, s,true)">
+                    <td>
+                      <input type="checkbox" ng-model="s.checked" ng-change="updateSelectedServices(s,true)"
+                        ng-click="$event.stopPropagation()">
+                    </td>
+                    <td>{{s.serviceId}}</td>
+                    <td>{{s.serviceName}}</td>
+                    <td>{{s.price|formatPrice}}</td>
+                    <td>
+                      <input type="number" min="1" ng-model="s.quantity" style="width: 45px; text-align: center;"
+                        id="{{s.serviceId}}" placeholder="1" ng-click="$event.stopPropagation()">
+                    </td>
+                    <td>{{s.timeEstimate}} phút</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div ng-show="isSelectByServiceUp" class="mb-3">
+            <table class="table table-hover datatables" id="dataTable-list-service-app-update" style="cursor: pointer;">
+              <thead>
+                <tr>
+                  <th>
+                    #
+                  </th>
+                  <th>ID</th>
+                  <th>Tên dịch vụ</th>
+                  <th>Giá</th>
+                  <th>Số lượng</th>
+                  <th>Thời lượng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="s in listServiceFromDB" ng-click="toggleCheckbox($event, s,true)">
+                  <td>
+                    <input type="checkbox" ng-model="s.checked" ng-change="updateSelectedServices(s,true)"
+                      ng-click="$event.stopPropagation()">
+                  </td>
+                  <td>{{s.serviceId}}</td>
+                  <td>{{s.serviceName}}</td>
+                  <td>{{s.price|formatPrice}}</td>
+                  <td>
+                    <input type="number" min="1" ng-model="s.quantity" style="width: 45px; text-align: center;"
+                      id="{{s.serviceId}}" placeholder="1" ng-click="$event.stopPropagation()">
+                  </td>
+                  <td>{{s.timeEstimate}} phút</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div ng-show="isContinueShow()" class="card d-inline-flex mb-3 w-100"
+            style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px;">
+            <div class="card-body bg-light text-warning p-3">
+              <p>Dịch vụ đã chọn: </p>
+              <table class="table table-borderless table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên dịch vụ</th>
+                    <th scope="col" class="text-right">Đơn giá</th>
+                    <th scope="col" class="text-right">Số lượng</th>
+                    <th scope="col" class="text-right">Thành tiền</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="s in selectedServicesUp">
+                    <th scope="row">{{s.serviceId}}</th>
+                    <td>{{s.serviceName}}</td>
+                    <td class="text-right">{{s.price | formatPrice}}</td>
+                    <td class="text-right">{{s.quantity}}</td>
+                    <td class="text-right">{{s.price*s.quantity | formatPrice}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="row mt-5">
+                <div class="col-2 text-center">
+                </div>
+                <div class="col-md-5">
+                  <p hidden>temp</p>
+                </div>
+                <div class="col-md-5">
+                  <div class="text-right mr-2">
+
+                    <p class="mb-2 h6">
+                      <span class="text-muted">Tổng thanh toán : </span>
+                      <span>{{getTotalPrice()|formatPrice}}</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row mb-3" ng-class="{'disabled-div': !isShowFormResult}">
+
+        <div class="custom-control custom-switch mb-3">
+          <input type="checkbox" class="custom-control-input" id="IsReExamination" ng-model="formUpApp.isReExamination"
+            ng-checked="formUpApp.isReExamination" ng-disabled="!isShowFormResult">
+          <label class="custom-control-label" for="IsReExamination">Tái khám</label>
+        </div>
+
+        <div class="mb-3" ng-show="formUpApp.isReExamination">
+          <div class="row">
+            <div class="col-3" ng-repeat="dateNum in initReExaminationDate">
+              <div class="custom-checkbox checbox-checked me-3">
+                <label>
+                  <input type="radio" name="initReExaminationDate" id="repeatRadioTOS-{{$index}}"
+                    ng-click="onChangeReExaminationDate(dateNum.value)" ng-model="dateRequestReExamination"
+                    ng-value="dateNum.value">
+                  <span>{{dateNum.value}} ngày</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="date-input1">Ngày tái khám khám</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="button-addon-date"><span class="fe fe-calendar fe-16"></span>
+                </div>
+              </div>
+              <input type="text" class="form-control drgpicker-reExam" id="reExaminationDate"
+                ng-model="formUpApp.reExaminationDate" autocomplete="off">
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+
+  </div>

@@ -1,0 +1,662 @@
+<div class="vertical  dark ">
+  <div class="wrapper">
+    <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+    </nav>
+    <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+      data-simplebar>
+    </aside>
+    <main role="main" class="main-content" ng-controller="AdminPatientRecord">
+
+      <div class="d-flex flex-items-center flex-justify-between">
+        <h1 class="text-muted" id="history-pagehead">Lich sử điều trị</h1>
+      </div>
+      <div class="custom-hr"></div>
+      <div class="box mt-3">
+        <!-- <div class="box-header mb-3">
+          <div class="row align-items-center justify-content-end">
+            <div class="col-lg-3">
+              <select id="filterCustomer" class="form-control select2" ng-model="formPatientRecord.patientId"
+                ng-options="p.patientId as (p.fullName + (p.phoneNumber ? ' - ' + p.phoneNumber : '')) for p in listPatientDB"
+                style="height: 40px;">
+              </select>
+            </div>
+            <div class="col-lg-3">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text" id="button-addon-date">
+                    <span class="fe fe-calendar fe-16"></span>
+                  </div>
+                </div>
+                <input type="text" class="form-control drgpickerSingle" id="dateFilterPatientRecord"
+                  ng-model="formPatientRecord.dateFilter" autocomplete="off" style="height: 40px;">
+              </div>
+            </div>
+
+          </div>
+        </div> -->
+        <div class="box-content">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div class="card card-fill timeline">
+                <div class="card-header">
+                  <div class="box-header">
+                    <div class="d-flex justify-content-between mb-3">
+                      <div>
+                        <button type="button" class="btn btn-outline-primary p-2" ng-click="reFresh()">
+                          <i class="fe fe-refresh-ccw"></i>
+                          Làm mới
+                        </button>
+                      </div>
+                      <div class="appointment-pagination mb-2">
+                        <nav ng-include="'component/pagination.html'"></nav>
+                      </div>
+                    </div>
+                    <div class="row align-items-center justify-content-end">
+                      <div class="col-lg-3">
+                        <label for="filterDoctor">Chọn bác sĩ</label>
+                        <select id="filterDoctor" class="form-control select2-multi"
+                          ng-model="formPatientRecord.doctorId"
+                          ng-options="d.doctorId as d.fullName for d in listdoctorDB" style="height: 40px;">
+                        </select>
+                      </div>
+                      <div class="col-lg-3">
+                        <label for="filterPatient">Chọn bệnh nhân</label>
+                        <select id="filterPatient" class="form-control select2-multi"
+                          ng-model="formPatientRecord.patientId"
+                          ng-options="p.patientId as (p.fullName + (p.phoneNumber ? ' - ' + p.phoneNumber : '')) for p in listPatientDB"
+                          style="height: 40px;">
+                        </select>
+                      </div>
+                      <div class="col-lg-3">
+                        <label for="dateFilterPatientRecord">Chọn ngày</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <div class="input-group-text" id="button-addon-date">
+                              <span class="fe fe-calendar fe-16"></span>
+                            </div>
+                          </div>
+                          <input type="text" class="form-control drgpicker-filter-record" id="dateFilterPatientRecord"
+                            ng-model="formPatientRecord.dateFilter" autocomplete="off" style="height: 40px;">
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+
+                  <div ng-show="listAppGroupByDateDB.length==0" class="text-warning text-center">Không có dữ liệu hiển
+                    thị</div>
+
+                  <div class="appointment-content" ng-repeat="map in listAppGroupByDateDB |limitTo:pageSize:begin">
+                    <h6 class="text-uppercase text-muted mb-4 mt-4">{{map[0] | dateFormat}}</h6>
+                    <div class="pb-3 timeline-item" ng-repeat="app in map[1]" ng-class="
+                    {
+                      'item-confirmed': app.appointmentStatus.status=='Đã Xác Nhận',
+                      'item-completed': app.appointmentStatus.status=='Hoàn Thành',
+                      'item-progress': app.appointmentStatus.status=='Đang Diễn Ra',
+                      'item-canceled': app.appointmentStatus.status=='Đã Hủy',
+                      'item-noshow': app.appointmentStatus.status=='Không Đến',
+                      'item-rescheduled': app.appointmentStatus.status=='Hoãn',
+                      'item-booked': app.appointmentStatus.status=='Đã Đặt'
+                    }" style="border: 1px solid rgb(221, 215, 215); margin: 0; border-radius: 5px;"
+                    ng-init="bill = getBillByAppointment(app.appointmentId,listBillByAppointmentAndPatientDB)">
+                      <div class="pl-5">
+                        <div class="mb-3">
+                          Khách hàng <strong>{{app.patient.fullName}}</strong>
+                          <span class="text-muted mx-2">đã
+                            {{app.appointmentStatus.status}} cuộc hẹn</span>
+                          <strong>{{app.appointmentId}}</strong>
+                          <!-- <button class="float-right btn btn-outline-primary" href="#!" style="margin: 5px;"
+                            ng-click="showDetail(app)">Xem chi
+                            tiết</button> -->
+                          <button id="btn-paintient-record-details" class="float-right btn btn-outline-primary"
+                            href="#!" style="margin: 5px;" data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasDetails-{{app.appointmentId}}"
+                            aria-controls="offcanvasDetails-{{app.appointmentId}}">Xem chi tiết</button>
+                          <div style="height: 90vh;" class="offcanvas offcanvas-bottom" tabindex="-1"
+                            id="offcanvasDetails-{{app.appointmentId}}" aria-labelledby="offcanvasBottomLabel">
+                            <div class="offcanvas-header">
+                              <h5 class="offcanvas-title" id="offcanvasBottomLabel">Xem chi tiết bệnh án
+                                {{app.appointmentPatientRecord.appointmentPatientRecordId}}</h5>
+                              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                              <ul class="nav nav-tabs nav-justified mb-3">
+                                <li class="nav-item">
+                                  <a class="nav-link" ng-class="{active: isSelected(-1)}"
+                                    ng-click="selectTab(-1,$event)" href="#">Thông tin
+                                    bệnh nhân</a>
+                                </li>
+                                <li class="nav-item">
+                                  <a class="nav-link" ng-class="{active: isSelected(-2)}"
+                                    ng-click="selectTab(-2,$event)" href="#">Xem hóa
+                                    đơn</a>
+                                </li>
+                                <li class="nav-item">
+                                  <a class="nav-link" ng-class="{active: isSelected(-3)}"
+                                    ng-click="selectTab(-3,$event)" href="#">Đơn
+                                    thuốc</a>
+                                </li>
+                              </ul>
+                              <div class="tab-content">
+                                <div class="tab-pane" ng-class="{ 'active show': isSelected(-1) }">
+                                  <div class="row justify-content-center">
+                                    <div class="col-12">
+                                      <div class="row mt-2 align-items-center">
+                                        <div class="col-md-3 text-center mb-5">
+                                          <div class="avatar avatar-xl">
+                                            <img src="/assets/images/avatars/ntt.jpeg" alt="..."
+                                              class="avatar-img rounded-circle">
+                                          </div>
+                                        </div>
+                                        <div class="col">
+                                          <div class="row align-items-center">
+                                            <div class="col-md-7">
+                                              <h4 class="mb-1">{{app.patient.fullName}}</h4>
+                                              <p class="mb-3"><span class="badge badge-dark">ID: {{app.patient.patientId
+                                                  }}</span>
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <div class="row mb-4">
+                                            <div class="col-md-7">
+                                              <p class="mb-0 text-muted" ng-show="app.patient.gender==='MALE'">Giới
+                                                tính: Nam </p>
+                                              <p class="mb-0 text-muted" ng-show="app.patient.gender==='FEMALE'">Giới
+                                                tính: Nữ </p>
+                                              <p class="mb-0 text-muted"
+                                                ng-show="app.patient.gender!=='FEMALE'&&app.patient.gender!=='MALE'">
+                                                Giới tính: Khác </p>
+                                              <p class="mb-0 text-muted">CMND/CCCD:
+                                                {{app.patient.citizenIdentificationNumber}}</p>
+                                              <p class="mb-0 text-muted">Ngày sinh: {{app.patient.birthday | dateFormat
+                                                }}</p>
+                                            </div>
+                                            <div class="col">
+                                              <p class="mb-0 text-muted">Địa chỉ: </p>
+                                              <p class="mb-0 text-muted">Điện thoại: {{app.patient.phoneNumber |
+                                                phoneNumberFormat}} </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <h6 class="mb-3">Bill gần đây</h6>
+                                      <table class="table table-borderless table-striped">
+                                        <thead>
+                                          <tr role="row">
+                                            <th>Số Bill</th>
+                                            <th>Ngày Bill</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Hình thức thành toán</th>
+                                            <th>Trạng thái</th>
+                                            <th>Chi tiết</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <th scope="col">1331</th>
+                                            <td>20/07/2024</td>
+                                            <td>5.000.000 VND</td>
+                                            <td>Tiền mặt</td>
+                                            <td>
+                                              <span class="dot dot-lg bg-success mr-2"></span>
+                                              Đã thanh toán
+                                            </td>
+                                            <td>
+                                              <button class="btn btn-outline-info">Chi tiết</button>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div> <!-- /.col-12 -->
+                                  </div>
+                                </div>
+                                <div class="tab-pane" ng-class="{ 'active show': isSelected(-2) }">
+                                  <div ng-show="bill.length==0" class="text-warning text-center">Không có bill hiển thị</div>
+                                  <div ng-show="bill.length!=0" class="row justify-content-center">
+                                    <div class="col-12 col-lg-10 col-xl-8">
+                                      <div class="row align-items-center mb-4">
+                                        <div class="col">
+                                          <h2 class="h5 page-title"><small
+                                              class="text-muted text-uppercase">BILL</small><br />#{{bill[0].billId}}</h2>
+                                        </div>
+                                        <div class="col-auto">
+                                          <button type="button" class="btn btn-secondary">In Bill</button>
+                                          <button type="button" class="btn btn-primary">Gửi e-mail</button>
+                                        </div>
+                                      </div>
+                                      <div class="card shadow">
+                                        <div class="card-body p-5">
+                                          <div class="row mb-5">
+                                            <div class="col-12 text-center mb-4">
+                                              <img src="/assets/images/logo2.jpg"
+                                                class="navbar-brand-img brand-sm mx-auto mb-4" alt="...">
+                                              <h2 class="mb-0 text-uppercase">BILL</h2>
+                                              <p class="text-muted"> {{bill[0].createAt | dateFormat}}<br /> Nha khoa Tooth Teeth</p>
+                                            </div>
+                                            <div class="col-md-7">
+                                              <p class="small text-muted text-uppercase mb-2">Nha Khoa</p>
+                                              <p class="mb-4">
+                                                <strong>Tooth Teeth</strong><br /> Địa chỉ: 51/A, 3/2, Ninh Kiều, Cần Thơ<br /> MST: 180000111<br /> (84) 0969 281 254<br />
+                                              </p>
+                                              <p>
+                                                <span class="small text-muted text-uppercase">Bill #</span><br />
+                                                <strong>{{bill[0].billId}}</strong>
+                                              </p>
+                                            </div>
+                                            <div class="col-md-5">
+                                              <p class="small text-muted text-uppercase mb-2">Khách hàng</p>
+                                              <p class="mb-4">
+                                                <strong>{{bill[0].appointment.patient.fullName}}</strong>
+                                                <br /> 
+                                                Địa chỉ: {{bill[0].appointment.patient.citizenIdentificationNumber}}<br />
+                                                Số điện thoại: {{bill[0].appointment.patient.phoneNumber | phoneNumberFormat}}<br />
+                                              </p>
+                                              <p>
+                                                <small class="small text-muted text-uppercase">Due date</small><br />
+                                                <strong>April, 20, 2020</strong>
+                                              </p>
+                                            </div>
+                                          </div> <!-- /.row -->
+                                          <table class="table table-borderless table-striped">
+                                            <thead>
+                                              <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Description</th>
+                                                <th scope="col" class="text-right">Rate</th>
+                                                <th scope="col" class="text-right">Hours</th>
+                                                <th scope="col" class="text-right">Ammout</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                <th scope="row">1</th>
+                                                <td> Creative Design<br />
+                                                  <span class="small text-muted">Design responsive website with existing
+                                                    prototype</span>
+                                                </td>
+                                                <td class="text-right">$15.00</td>
+                                                <td class="text-right">2</td>
+                                                <td class="text-right">$30.00</td>
+                                              </tr>
+                                              <tr>
+                                                <th scope="row">2</th>
+                                                <td> Front-End Development<br />
+                                                  <span class="small text-muted">Markup conversion and adding
+                                                    JavaScript</span>
+                                                </td>
+                                                <td class="text-right">$20.00</td>
+                                                <td class="text-right">5</td>
+                                                <td class="text-right">$100.00</td>
+                                              </tr>
+                                              <tr>
+                                                <th scope="row">2</th>
+                                                <td> Back-End Development<br />
+                                                  <span class="small text-muted">Database intergration with model
+                                                    functions</span>
+                                                </td>
+                                                <td class="text-right">$25.00</td>
+                                                <td class="text-right">7</td>
+                                                <td class="text-right">$155.00</td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                          <div class="row mt-5">
+                                            <div class="col-2 text-center">
+                                              <img src="./assets/images/qrcode.svg"
+                                                class="navbar-brand-img brand-sm mx-auto my-4" alt="...">
+                                            </div>
+                                            <div class="col-md-5">
+                                              <p class="text-muted small">
+                                                <strong>Note :</strong> Lorem ipsum dolor sit amet, consectetur
+                                                adipiscing elit. Nam hendrerit nisi sed sollicitudin pellentesque. Nunc
+                                                posuere purus rhoncus pulvinar aliquam.
+                                              </p>
+                                            </div>
+                                            <div class="col-md-5">
+                                              <div class="text-right mr-2">
+                                                <p class="mb-2 h6">
+                                                  <span class="text-muted">Subtotal : </span>
+                                                  <strong>$285.00</strong>
+                                                </p>
+                                                <p class="mb-2 h6">
+                                                  <span class="text-muted">VAT (10%) : </span>
+                                                  <strong>$28.50</strong>
+                                                </p>
+                                                <p class="mb-2 h6">
+                                                  <span class="text-muted">Total : </span>
+                                                  <span>$313.50</span>
+                                                </p>
+                                              </div>
+                                            </div>
+                                          </div> <!-- /.row -->
+                                        </div> <!-- /.card-body -->
+                                      </div> <!-- /.card -->
+                                    </div> <!-- /.col-12 -->
+                                  </div>
+                                </div>
+                                <div class="tab-pane" ng-class="{ 'active show': isSelected(-3) }">
+                                  <div>Lịch sử</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="card d-inline-flex mb-2">
+                          <div class="card-body bg-light py-2 px-3">
+                            Khách hàng đã điệu trị các vấn đề
+                            <strong>{{app.appointmentPatientRecord.currentCodition}}</strong>
+                          </div>
+                        </div>
+                        </p>
+                        <p class="text-muted">Bác sĩ điều trị: {{app.doctor.fullName}}
+                          <span class="badge badge-light">Hẹn tái khám:
+                            {{app.appointmentPatientRecord.reExamination}}</span>
+                        </p>
+
+                      </div>
+                    </div>
+                    <!-- <div class="custom-hr mt-3"></div> -->
+                  </div>
+
+                  <div class="appointment-pagination mt-3 d-flex justify-content-center">
+                    <nav ng-include="'component/pagination.html'"></nav>
+                  </div>
+
+                </div> <!-- / .card-body -->
+              </div> <!-- / .card -->
+            </div> <!-- .col-12 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- start details paintient record -->
+      <button id="btn-paintient-record-details" class="float-right btn btn-outline-primary" href="#!"
+        style="margin: 5px;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDetails"
+        aria-controls="offcanvasDetails" hidden>Xem chi tiết</button>
+      <div style="height: 90vh;" class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasDetails"
+        aria-labelledby="offcanvasBottomLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasBottomLabel">Xem chi tiết bệnh án</h5>
+          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="nav nav-tabs nav-justified mb-3">
+            <li class="nav-item">
+              <a class="nav-link" ng-class="{active: isSelected(-1)}" ng-click="selectTab(-1,$event)" href="#">Thông tin
+                bệnh nhân</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" ng-class="{active: isSelected(-2)}" ng-click="selectTab(-2,$event)" href="#">Xem hóa
+                đơn</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" ng-class="{active: isSelected(-3)}" ng-click="selectTab(-3,$event)" href="#">Đơn
+                thuốc</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane" ng-class="{ 'active show': isSelected(-1) }">
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <div class="row mt-2 align-items-center">
+                    <div class="col-md-3 text-center mb-5">
+                      <div class="avatar avatar-xl">
+                        <img src="/assets/images/avatars/ntt.jpeg" alt="..." class="avatar-img rounded-circle">
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="row align-items-center">
+                        <div class="col-md-7">
+                          <h4 class="mb-1">app.patient.fullName</h4>
+                          <p class="small mb-3"><span class="badge badge-dark">New York, USA</span></p>
+                        </div>
+                      </div>
+                      <div class="row mb-4">
+                        <div class="col-md-7">
+                          <p class="text-muted"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris blandit
+                            nisl ullamcorper, rutrum metus in, congue lectus. In hac habitasse platea dictumst. Cras
+                            urna quam, malesuada vitae risus at, pretium blandit sapien. </p>
+                        </div>
+                        <div class="col">
+                          <p class="small mb-0 text-muted">Nec Urna Suscipit Ltd</p>
+                          <p class="small mb-0 text-muted">P.O. Box 464, 5975 Eget Avenue</p>
+                          <p class="small mb-0 text-muted">(537) 315-1481</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h6 class="mb-3">Last payment</h6>
+                  <table class="table table-borderless table-striped">
+                    <thead>
+                      <tr role="row">
+                        <th>ID</th>
+                        <th>Purchase Date</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="col">1331</th>
+                        <td>2020-12-26 01:32:21</td>
+                        <td>$16.9</td>
+                        <td>Paypal</td>
+                        <td><span class="dot dot-lg bg-warning mr-2"></span>Due</td>
+                        <td>
+                          <div class="dropdown">
+                            <button class="btn btn-sm dropdown-toggle more-vertical" type="button"
+                              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <span class="text-muted sr-only">Action</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              <a class="dropdown-item" href="#">Edit</a>
+                              <a class="dropdown-item" href="#">Remove</a>
+                              <a class="dropdown-item" href="#">Assign</a>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="col">1156</th>
+                        <td>2020-04-21 00:38:38</td>
+                        <td>$9.9</td>
+                        <td>Paypal</td>
+                        <td><span class="dot dot-lg bg-danger mr-2"></span>False</td>
+                        <td>
+                          <div class="dropdown">
+                            <button class="btn btn-sm dropdown-toggle more-vertical" type="button"
+                              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <span class="text-muted sr-only">Action</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              <a class="dropdown-item" href="#">Edit</a>
+                              <a class="dropdown-item" href="#">Remove</a>
+                              <a class="dropdown-item" href="#">Assign</a>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="col">1038</th>
+                        <td>2019-06-25 19:13:36</td>
+                        <td>$9.9</td>
+                        <td>Credit Card </td>
+                        <td><span class="dot dot-lg bg-success mr-2"></span>Paid</td>
+                        <td>
+                          <div class="dropdown">
+                            <button class="btn btn-sm dropdown-toggle more-vertical" type="button"
+                              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <span class="text-muted sr-only">Action</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              <a class="dropdown-item" href="#">Edit</a>
+                              <a class="dropdown-item" href="#">Remove</a>
+                              <a class="dropdown-item" href="#">Assign</a>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="col">1227</th>
+                        <td>2021-01-22 13:28:00</td>
+                        <td>$9.9</td>
+                        <td>Paypal</td>
+                        <td><span class="dot dot-lg bg-success mr-2"></span>Paid</td>
+                        <td>
+                          <div class="dropdown">
+                            <button class="btn btn-sm dropdown-toggle more-vertical" type="button"
+                              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <span class="text-muted sr-only">Action</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              <a class="dropdown-item" href="#">Edit</a>
+                              <a class="dropdown-item" href="#">Remove</a>
+                              <a class="dropdown-item" href="#">Assign</a>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div> <!-- /.col-12 -->
+              </div>
+            </div>
+            <div class="tab-pane" ng-class="{ 'active show': isSelected(-2) }">
+              <div class="row justify-content-center">
+                <div class="col-12 col-lg-10 col-xl-8">
+                  <div class="row align-items-center mb-4">
+                    <div class="col">
+                      <h2 class="h5 page-title"><small class="text-muted text-uppercase">Invoice</small><br />#1806</h2>
+                    </div>
+                    <div class="col-auto">
+                      <button type="button" class="btn btn-secondary">Print</button>
+                      <button type="button" class="btn btn-primary">Pay</button>
+                    </div>
+                  </div>
+                  <div class="card shadow">
+                    <div class="card-body p-5">
+                      <div class="row mb-5">
+                        <div class="col-12 text-center mb-4">
+                          <img src="./assets/images/logo.svg" class="navbar-brand-img brand-sm mx-auto mb-4" alt="...">
+                          <h2 class="mb-0 text-uppercase">Invoice</h2>
+                          <p class="text-muted"> Altavista<br /> 9022 Suspendisse Rd. </p>
+                        </div>
+                        <div class="col-md-7">
+                          <p class="small text-muted text-uppercase mb-2">Invoice from</p>
+                          <p class="mb-4">
+                            <strong>Imani Lara</strong><br /> Asset Management<br /> 9022
+                            Suspendisse Rd.<br /> High Wycombe<br /> (478) 446-9234<br />
+                          </p>
+                          <p>
+                            <span class="small text-muted text-uppercase">Invoice #</span><br />
+                            <strong>1806</strong>
+                          </p>
+                        </div>
+                        <div class="col-md-5">
+                          <p class="small text-muted text-uppercase mb-2">Invoice to</p>
+                          <p class="mb-4">
+                            <strong>Walter Sawyer</strong><br /> Human Resources<br /> Ap #992-8933
+                            Sagittis Street<br /> Ivanteyevka<br /> (803) 792-2559<br />
+                          </p>
+                          <p>
+                            <small class="small text-muted text-uppercase">Due date</small><br />
+                            <strong>April, 20, 2020</strong>
+                          </p>
+                        </div>
+                      </div> <!-- /.row -->
+                      <table class="table table-borderless table-striped">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Description</th>
+                            <th scope="col" class="text-right">Rate</th>
+                            <th scope="col" class="text-right">Hours</th>
+                            <th scope="col" class="text-right">Ammout</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row">1</th>
+                            <td> Creative Design<br />
+                              <span class="small text-muted">Design responsive website with existing
+                                prototype</span>
+                            </td>
+                            <td class="text-right">$15.00</td>
+                            <td class="text-right">2</td>
+                            <td class="text-right">$30.00</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">2</th>
+                            <td> Front-End Development<br />
+                              <span class="small text-muted">Markup conversion and adding
+                                JavaScript</span>
+                            </td>
+                            <td class="text-right">$20.00</td>
+                            <td class="text-right">5</td>
+                            <td class="text-right">$100.00</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">2</th>
+                            <td> Back-End Development<br />
+                              <span class="small text-muted">Database intergration with model
+                                functions</span>
+                            </td>
+                            <td class="text-right">$25.00</td>
+                            <td class="text-right">7</td>
+                            <td class="text-right">$155.00</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="row mt-5">
+                        <div class="col-2 text-center">
+                          <img src="./assets/images/qrcode.svg" class="navbar-brand-img brand-sm mx-auto my-4"
+                            alt="...">
+                        </div>
+                        <div class="col-md-5">
+                          <p class="text-muted small">
+                            <strong>Note :</strong> Lorem ipsum dolor sit amet, consectetur
+                            adipiscing elit. Nam hendrerit nisi sed sollicitudin pellentesque. Nunc
+                            posuere purus rhoncus pulvinar aliquam.
+                          </p>
+                        </div>
+                        <div class="col-md-5">
+                          <div class="text-right mr-2">
+                            <p class="mb-2 h6">
+                              <span class="text-muted">Subtotal : </span>
+                              <strong>$285.00</strong>
+                            </p>
+                            <p class="mb-2 h6">
+                              <span class="text-muted">VAT (10%) : </span>
+                              <strong>$28.50</strong>
+                            </p>
+                            <p class="mb-2 h6">
+                              <span class="text-muted">Total : </span>
+                              <span>$313.50</span>
+                            </p>
+                          </div>
+                        </div>
+                      </div> <!-- /.row -->
+                    </div> <!-- /.card-body -->
+                  </div> <!-- /.card -->
+                </div> <!-- /.col-12 -->
+              </div>
+            </div>
+            <div class="tab-pane" ng-class="{ 'active show': isSelected(-3) }">
+              <div>Lịch sử</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end details paintient record -->
+
+      <div class="admin-notify" ng-include="'component/admin-notify.html'"></div>
+    </main> <!-- main -->
+  </div>
+</div>

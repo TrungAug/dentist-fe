@@ -1,0 +1,442 @@
+<div class="vertical  dark ">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+        </nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar>
+        </aside>
+        <main role="main" class="main-content" ng-controller="AdminDoctorScheduleController">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <div id='calendar-register-doctor-schedule'></div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="d-flex align-items-start">
+                                <div class="nav flex-column nav-pills custom-nav-v-pill" id="v-pills-tab" role="tablist"
+                                    aria-orientation="vertical">
+                                    <button class="nav-link active" id="v-pills-doctor-schedule-tab"
+                                        data-bs-toggle="pill" data-bs-target="#v-pills-doctor-schedule" type="button"
+                                        role="tab" aria-controls="v-pills-doctor-schedule" aria-selected="true">Lịch
+                                        làm</button>
+                                    <button class="nav-link" id="v-pills-register-schedule-tab" data-bs-toggle="pill"
+                                        data-bs-target="#v-pills-register-schedule" type="button" role="tab"
+                                        aria-controls="v-pills-register-schedule" aria-selected="false"
+                                        loading-indicator>Đăng ký</button>
+                                    <button class="nav-link" id="v-pills-list-schedule-tab" data-bs-toggle="pill"
+                                        data-bs-target="#v-pills-list-schedule" type="button" role="tab"
+                                        aria-controls="v-pills-list-schedule" aria-selected="false"
+                                        loading-indicator>Danh sách</button>
+                                </div>
+                                <div class="tab-content w-100" id="v-pills-tabContent">
+                                    <div class="tab-pane fade show active" id="v-pills-doctor-schedule" role="tabpanel"
+                                        aria-labelledby="v-pills-doctor-schedule-tab">
+                                        <div id='calendar-doctor-schedule'></div>
+                                    </div>
+                                    <div class="tab-pane fade" id="v-pills-register-schedule" role="tabpanel"
+                                        aria-labelledby="v-pills-register-schedule-tab">
+                                        <div class="card shadow">
+                                            <div class="card-header">
+                                                <p class="text-danger">(*) Bác sĩ đăng ký lịch làm việc ít nhất 2 ngày
+                                                </p>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-lg-6 content-block">
+                                                        <div class="form-group" ng-show="!isChangeSchedule">
+                                                            <label for="dateOfDoctorSchedule">Ngày làm
+                                                                việc</label>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <div class="input-group-text"
+                                                                        id="button-addon-date">
+                                                                        <span class="fe fe-calendar fe-16"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="text" class="form-control drgpicker"
+                                                                    id="dateOfDoctorSchedule"
+                                                                    ng-model="formDoctorSchedule.date"
+                                                                    autocomplete="off">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group" ng-show="isChangeSchedule">
+                                                            <label for="dateOfDoctorScheduleSingle">Ngày làm
+                                                                việc</label>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <div class="input-group-text"
+                                                                        id="button-addon-date">
+                                                                        <span class="fe fe-calendar fe-16"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="text" class="form-control drgpickerSingle"
+                                                                    id="dateOfDoctorScheduleSingle"
+                                                                    ng-model="formDoctorSchedule.date"
+                                                                    autocomplete="off">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group" ng-show="!isChangeSchedule">
+                                                            <label for="formDoctorScheduleShiftId">Ca làm
+                                                                việc</label>
+                                                            <select id="formDoctorScheduleShiftId"
+                                                                class="form-control select2-multi"
+                                                                ng-model="formDoctorSchedule.shiftId"
+                                                                ng-options="s.shiftId as s.name for s in listShiftDB">
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="form-group" ng-show="isChangeSchedule">
+                                                            <label for="formDoctorScheduleShiftIdSingle">Ca làm
+                                                                việc</label>
+                                                            <select id="formDoctorScheduleShiftIdSingle"
+                                                                class="form-control select2"
+                                                                ng-model="formDoctorSchedule.shiftId"
+                                                                ng-options="s.shiftId as s.name for s in listShiftDB">
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="mt-5 d-flex justify-content-around">
+                                                            <button class="btn btn-primary pull-right"
+                                                                ng-click="createDoctorSchedule()"
+                                                                ng-show="!isChangeSchedule">Đăng ký</button>
+                                                            <button class="btn btn-info pull-right"
+                                                                ng-click="changeDoctorSchedule()"
+                                                                ng-show="isChangeSchedule">Đổi lịch</button>
+                                                            <button class="btn btn-outline-danger pull-right"
+                                                                ng-click="cancelDoctorSchedule()"
+                                                                ng-show="isChangeSchedule">Hủy đăng ký</button>
+                                                        </div>
+
+                                                        <div class="toast-notification mt-5" ng-show="isChangeSchedule">
+                                                            Bạn đang thay đổi lịch làm việc của
+                                                            <ul>
+                                                                <li>Ngày: {{formDoctorScheduleShow.date}} </li>
+                                                                <li>Ca: {{formDoctorScheduleShow.shift.name
+                                                                    }} </li>
+                                                            </ul>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-lg-6 image-block">
+                                                        <img src="/assets//images/bg/admin-doctor-schedule-bg.jpg"
+                                                            alt="" class="w-100" style="height: auto;">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="v-pills-list-schedule" role="tabpanel"
+                                        aria-labelledby="v-pills-list-schedule-tab">
+
+                                        <table class="table table-hover datatables"
+                                            id="dataTable-list-schedule-by-doctor">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ngày làm việc</th>
+                                                    <th>Ca làm việc</th>
+                                                    <th>Thời gian bắt đầu ca làm</th>
+                                                    <th>Thời gian bắt kết thúc ca làm</th>
+                                                    <th>Số giờ làm</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="ds in listDoctorScheduleByDoctorDB">
+                                                    <td>{{ds.date|dateFormat}}</td>
+                                                    <td>Ca {{ds.shift?ds.shift.name:null}}</td>
+                                                    <td>{{ds.shift?ds.shift.beginTime:null|timeFormat}}</td>
+                                                    <td>{{ds.shift?ds.shift.endTime:null|timeFormat}}</td>
+                                                    <td>{{calculateWorkingHours(ds.shift.beginTime,ds.shift.endTime)}}
+                                                        giờ</td>
+                                                    <td>
+                                                        <button class="btn btn-info"
+                                                            style="width: 100px;height: 30px;padding: 5px"
+                                                            ng-show="comparasionDate(ds.date)"
+                                                            ng-click="changeSchedule(ds)">Đổi ca</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <!-- <button class="btn btn-outline-info" ng-click="exportPDF()">Xuất PDF</button> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="row my-4">
+                            <div class="col-md-12">
+                                <h3 class="m-3 p-0 page-title">Lịch làm việc của bác sĩ</h3>
+                                <div id='calendar-doctor-schedule'></div>
+                            </div>
+                        </div> -->
+                    </div> <!-- .col-12 -->
+                </div> <!-- .row -->
+            </div> <!-- .container-fluid -->
+
+            <!-- Event details -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#eventDetailsDoctorSchedule" id="btnEventDetailsDoctorSchedule" hidden>
+                Xem chi tiết lịch làm
+            </button>
+            <div class="modal fade" id="eventDetailsDoctorSchedule" tabindex="-1"
+                aria-labelledby="eventDetailsDoctorScheduleLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="eventDetailsDoctorScheduleLabel" ng-show="validDate">Cập nhật
+                                lịch làm</h5>
+                            <h5 class="modal-title" id="eventDetailsDoctorScheduleLabel" ng-show="!validDate">Lịch đã
+                                làm việc</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="eventDetailsDoctorScheduleBody">
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+
+                                            <div class="form-group" ng-show="isChangeSchedule">
+                                                <label for="dateOfDoctorScheduleSingle">Ngày làm
+                                                    việc</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <div class="input-group-text" id="button-addon-date">
+                                                            <span class="fe fe-calendar fe-16"></span>
+                                                        </div>
+                                                    </div>
+                                                    <input type="text" class="form-control drgpickerSingle"
+                                                        id="dateOfDoctorScheduleSingle"
+                                                        ng-model="formDoctorSchedule.date" autocomplete="off"
+                                                        ng-disabled="!validDate">
+                                                </div>
+                                            </div>
+
+                                            <div class="select-shift p-3">
+                                                <div class="row">
+                                                    <label for="">Ca làm việc</label>
+                                                    <div class="col d-flex flex-row">
+                                                        <div class="custom-checkbox checbox-checked"
+                                                            ng-repeat="s in listShiftDB">
+                                                            <label>
+                                                                <input ng-click="getShift(s.shiftId)" type="checkbox"
+                                                                    id="repeatCheckRegisterDoctorShift-{{s.shiftId}}"
+                                                                    ng-checked="isShiftSelected(s.shiftId)"
+                                                                    ng-disabled="!validDate || isShiftBooked(s.shiftId)">
+                                                                <span style="color: rgb(226, 136, 8);">{{s.name}}</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-info pull-right" data-bs-dismiss="modal"
+                                ng-show="!validDate">Đóng</button>
+                            <button class="btn btn-info pull-right" ng-click="changeDoctorSchedule()"
+                                ng-show="validDate">Đổi
+                                lịch</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Event details -->
+
+            <!-- Register doctor schedule -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#registerDoctorSchedule" id="btnRegisterDoctorSchedule" hidden>
+                Đăng ký lịch làm bác sĩ
+            </button>
+            <div class="modal fade" id="registerDoctorSchedule" tabindex="-1"
+                aria-labelledby="registerDoctorScheduleLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 ng-show="startDate!=endDate" class="modal-title" id="registerDoctorScheduleLabel">Đăng
+                                ký lịch làm việc cho ngày {{startDate|dateFormat}} - {{endDate|dateFormat}}</h5>
+                            <h5 ng-show="startDate==endDate" class="modal-title" id="registerDoctorScheduleLabel">Đăng
+                                ký lịch làm việc cho ngày {{startDate|dateFormat}}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="registerDoctorScheduleBody">
+                            <div class="select-doctor mb-3 p-3">
+                                <div class="row">
+                                    <label for="">Chọn bác sĩ</label>
+                                    <div class="col d-flex flex-row">
+                                        <div class="custom-checkbox checbox-checked" ng-repeat="d in listDoctorDB">
+                                            <label>
+                                                <input ng-click="getDoctor(d.doctorId)" type="checkbox"
+                                                    id="repeatCheckRegisterDoctorSchedule-{{d.doctorId}}">
+                                                <span>{{d.fullName}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="select-shift p-3">
+                                <div class="row">
+                                    <label for="">Chọn ca làm việc</label>
+                                    <div class="col d-flex flex-row">
+                                        <div class="custom-checkbox checbox-checked" ng-repeat="s in listShiftDB">
+                                            <label>
+                                                <input ng-click="getShift(s.shiftId)" type="checkbox"
+                                                    id="repeatCheckRegisterDoctorShift-{{s.shiftId}}"
+                                                    ng-model="formRegisterDoctorSchedule.selectedShift"
+                                                    ng-checked="formRegisterDoctorSchedule.selectedShift"><span>{{s.name}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" ng-click="createDoctorSchedule()">Đồng
+                                ý</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Register doctor schedule -->
+
+
+            <div class="modal fade modal-notif modal-slide" tabindex="-1" role="dialog"
+                aria-labelledby="defaultModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="defaultModalLabel">Notifications</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="list-group list-group-flush my-n3">
+                                <div class="list-group-item bg-transparent">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-box fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small><strong>Package has uploaded successfull</strong></small>
+                                            <div class="my-0 text-muted small">Package is zipped and uploaded</div>
+                                            <small class="badge badge-pill badge-light text-muted">1m ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item bg-transparent">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-download fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small><strong>Widgets are updated successfull</strong></small>
+                                            <div class="my-0 text-muted small">Just create new layout Index, form, table
+                                            </div>
+                                            <small class="badge badge-pill badge-light text-muted">2m ago</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item bg-transparent">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-inbox fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small><strong>Notifications have been sent</strong></small>
+                                            <div class="my-0 text-muted small">Fusce dapibus, tellus ac cursus commodo
+                                            </div>
+                                            <small class="badge badge-pill badge-light text-muted">30m ago</small>
+                                        </div>
+                                    </div> <!-- / .row -->
+                                </div>
+                                <div class="list-group-item bg-transparent">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-link fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small><strong>Link was attached to menu</strong></small>
+                                            <div class="my-0 text-muted small">New layout has been attached to the menu
+                                            </div>
+                                            <small class="badge badge-pill badge-light text-muted">1h ago</small>
+                                        </div>
+                                    </div>
+                                </div> <!-- / .row -->
+                            </div> <!-- / .list-group -->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Clear
+                                All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade modal-shortcut modal-slide" tabindex="-1" role="dialog"
+                aria-labelledby="defaultModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="defaultModalLabel">Shortcuts</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body px-5">
+                            <div class="row align-items-center">
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-success justify-content-center">
+                                        <i class="fe fe-cpu fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Control area</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-activity fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Activity</p>
+                                </div>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-droplet fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Droplet</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-upload-cloud fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Upload</p>
+                                </div>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-users fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Users</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div class="squircle bg-primary justify-content-center">
+                                        <i class="fe fe-settings fe-32 align-self-center text-white"></i>
+                                    </div>
+                                    <p>Settings</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>

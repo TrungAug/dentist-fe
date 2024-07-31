@@ -1,0 +1,223 @@
+<style>
+    .dataTables_length {
+        margin-top: 10px;
+        margin-left: 5px;
+    }
+
+    .dataTables_filter {
+        margin-top: 10px;
+        margin-right: 5px;
+    }
+</style>
+<div class="vertical dark">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'"></nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar></aside>
+        <main role="main" class="main-content" ng-controller="AdminListDistributionSupplies">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <h2 class="mb-2 p-0 page-title">Quản lý nhà phân phối</h2>
+                        <p class="card-text"></p>
+                        <div class="row my-4">
+                            <div class="col-md-12">
+                                <div class="card shadow">
+                                    <div class="card-body">
+                                        <ul class="nav nav-pills mb-3" id="manageMedicines" role="tablist">
+
+                                        </ul>
+                                        <div class="tab-content" id="manageMedicinesTabContent">
+                                            <div class="tab-pane fade show active" id="form-tab-pane-manage-medicines"
+                                                role="tabpanel" aria-labelledby="form-tab-medicine" tabindex="0">
+                                                <a href="#!admin/save-distribution-supplies" type="btn btn-primary"
+                                                    style="color: white;float: right;" class="btn btn-primary"><span
+                                                        class="fe fe-plus fe-16 mr-3"></span>Thêm
+                                                    nhà phân phối</a>
+                                                <table class="table datatables " id="dataTable-list-service">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Mã nhà phân phối</th>
+                                                            <th>Cty Phân phối</th>
+                                                            <th>Tên</th>
+                                                            <th>Địa chỉ</th>
+                                                            <th>Email</th>
+                                                            <th>Người liên hệ</th>
+                                                            <th>TaxCode</th>
+                                                            <th>Ghi chú</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="m in listDistributionSuppliesFormDB"
+                                                            class="distribution_{{m.distributionId}}">
+                                                            <td>{{m.distributionId}}</td>
+                                                            <td>{{m.distribution}}</td>
+                                                            <td>{{m.name}}</td>
+                                                            <td>{{m.address}}</td>
+                                                            <td>{{m.email}}</td>
+                                                            <td>{{m.contactPerson}}</td>
+                                                            <td>{{m.taxCode}}</td>
+                                                            <td>{{m.note}}</td>
+                                                            <td>
+                                                                <button
+                                                                    class="btn btn-sm dropdown-toggle more-horizontal"
+                                                                    type="button" data-toggle="dropdown"
+                                                                    aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text white">...</span>
+                                                                </button>
+                                                                <div class="dropdown-menu dropdown-menu-right" style="
+                                                                        box-shadow: 0px 0px 10px
+                                                                            rgba(0, 0, 0, 0.5);
+                                                                        border-radius: 10px;
+                                                                        ">
+                                                                    <a class="dropdown-item text-primary"
+                                                                        data-bs-toggle="modal" data-bs-target="#myModal"
+                                                                        ng-click="editDistribution(m)"
+                                                                        href="javascript:void(0)"
+                                                                        style="font-size: 18px">Sửa</a>
+                                                                    <a class="dropdown-item text-danger"
+                                                                        ng-click="deleteDistribution(m)"
+                                                                        href="javascript:void(0)"
+                                                                        style="font-size: 18px">Xóa</a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="tab-pane fade " id="list-tab-pane-medicine" role="tabpanel"
+                                                aria-labelledby="list-tab-medicine" tabindex="0">
+                                                <div class="card mt-2">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- simple table -->
+                        </div>
+                        <!-- end section -->
+                    </div>
+                    <!-- .col-12 -->
+                </div>
+                <!-- .row -->
+                <!-- Model  -->
+                <div class="modal fade" id="myModal">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Cập nhật nhà phân phối</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="distribution">
+                                                Phân phối
+                                            </label>
+                                            <input type="text" id="distribution"
+                                                ng-model="editDistributionSupplies.distribution" class="form-control"
+                                                placeholder="Phân phối" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorDistributionModal">(*) Vui lòng nhập
+                                            phân
+                                            phối
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="distribution">Địa
+                                                chỉ
+                                                phân phối
+                                            </label>
+                                            <input type="text" id="distribution"
+                                                ng-model="editDistributionSupplies.address" class="form-control"
+                                                placeholder="Địa chỉ phân phối" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorAddressModal">(*) Vui
+                                            lòng nhập địa
+                                            chỉ</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="name">Tên phân phối
+                                            </label>
+                                            <input type="text" id="name" ng-model="editDistributionSupplies.name"
+                                                class="form-control" placeholder="Tên phân phối" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorNameModal">(*) Vui
+                                            lòng nhập tên</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="email">Email
+                                                Phân phối
+                                            </label>
+                                            <input type="text" id="email" ng-model="editDistributionSupplies.email"
+                                                class="form-control" placeholder="Email phân phối" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorEmailModal">(*) Vui
+                                            lòng nhập email</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="contactPerson">Người
+                                                liên hệ
+                                            </label>
+                                            <input type="text" id="contactPerson"
+                                                ng-model="editDistributionSupplies.contactPerson" class="form-control"
+                                                placeholder="Người liên hệ" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorContactPersonModal">(*) Vui lòng nhập
+                                            người
+                                            liên
+                                            hệ</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="taxCode">TaxCode
+                                            </label>
+                                            <input type="text" id="taxCode" ng-model="editDistributionSupplies.taxCode"
+                                                class="form-control" placeholder="TaxCode" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorTaxCodeModal">(*) Vui
+                                            lòng nhập taxCode</span>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="note">Ghi chú
+                                            </label>
+                                            <textarea name="" id="note" ng-model="editDistributionSupplies.note"
+                                                placeholder="Ghi chú" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+
+
+                                <button ng-click="updateDistribution()" class="btn btn-primary">
+                                    Cập nhật
+                                </button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- Model  -->
+            </div>
+            <!-- .container-fluid -->
+        </main>
+    </div>
+</div>

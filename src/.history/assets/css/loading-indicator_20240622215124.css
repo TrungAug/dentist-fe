@@ -1,0 +1,29 @@
+.loading-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5); /* Màu nền với độ mờ 50% */
+    color: white; /* Màu chữ */
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 1000; /* Đảm bảo nằm trên các phần tử khác */
+    text-align: center; /* Căn giữa nội dung */
+}
+
+.loading-indicator .spinner-border {
+    width: 3rem; /* Kích thước của spinner */
+    height: 3rem; /* Kích thước của spinner */
+    margin-top: 1rem; /* Khoảng cách từ spinner đến nội dung */
+}
+
+.loading-indicator .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}

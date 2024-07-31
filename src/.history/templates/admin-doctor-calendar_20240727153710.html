@@ -1,0 +1,150 @@
+<div class="vertical  dark ">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+        </nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar>
+        </aside>
+        <main role="main" class="main-content" ng-controller="AdminDoctorCalendarController">
+            <div class="container-fluid">
+                <div class="row justify-content-center mb-3">
+                    <div class="d-flex flex-items-center flex-justify-between custom-heading">
+                        <h3 class="text-muted">Lịch khám bệnh</h3>
+                    </div>
+                    <div class="custom-hr mb-3"></div>
+                    <div id='doctor-calendar-schedule'></div>
+                </div>
+
+                <div class="row justify-content-center mb-3">
+                    <div class="d-flex flex-items-center flex-justify-between custom-heading">
+                        <h3 class="text-muted">Lịch trực</h3>
+                    </div>
+                    <div class="custom-hr mb-3"></div>
+                    <div id='calendar-register-doctor-schedule-single'></div>
+                </div>
+
+            </div>
+
+
+
+            <!-- Event details -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#doctorUpdateAppointment" id="btnDoctorUpdateAppointment" hidden>
+                Cập nhật cuộc hẹn
+            </button>
+            <div class="modal fade" id="doctorUpdateAppointment" tabindex="-1"
+                aria-labelledby="doctorUpdateAppointmentLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="d-flex flex-items-center flex-justify-between" id="div-register-appointment">
+                                <h3 class="text-muted">Cập nhật lịch hẹn
+                                </h3>
+                            </div>
+                            <div class="custom-hr mb-3"></div>
+                            <button type="button" class="btn-close" id="btn-close-formDoctorUp" data-bs-dismiss="modal"
+                                aria-label="Close" hidden></button>
+                        </div>
+                        <div class="modal-body" id="doctorUpdateAppointmentBody">
+                            <div ng-include="'component/form-doctorup-calendar.html'"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <!-- <button type="button" class="btn btn-primary btn-create-appoinment"
+                                ng-click="doctorUpdateAppointment()" ng-show="!isDisabledStatus('')">Cập
+                                nhật</button> -->
+                            <button type="button" class="btn btn-outline-warning" ng-click="closeFormUp()">Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Event details -->
+
+            <!-- Event details -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#eventDetailsDoctorScheduleSingle" id="btnEventDetailsDoctorScheduleSingle" hidden>
+                Xem chi tiết lịch làm
+            </button>
+            <div class="modal fade" id="eventDetailsDoctorScheduleSingle" tabindex="-1"
+                aria-labelledby="eventDetailsDoctorScheduleSingleLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="eventDetailsDoctorScheduleSingleLabel" ng-show="validDate">Cập nhật
+                                lịch làm của Bác sĩ <span class="text-primary">{{formDoctorSchedule.fullName}}</span>
+                            </h5>
+                            <h5 class="modal-title" id="eventDetailsDoctorScheduleSingleLabel" ng-show="!validDate">Lịch đã
+                                làm việc của bác sĩ <span class="text-primary">{{formDoctorSchedule.fullName}}</span>
+                            </h5>
+
+                        </div>
+                        <div class="modal-body" id="eventDetailsDoctorScheduleSingleBody">
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+
+                                            <div class="form-group" ng-show="isChangeSchedule">
+                                                <label for="dateOfDoctorScheduleSingle">Ngày làm
+                                                    việc</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <div class="input-group-text" id="button-addon-date">
+                                                            <span class="fe fe-calendar fe-16"></span>
+                                                        </div>
+                                                    </div>
+                                                    <input type="text" class="form-control drgpickerSingle"
+                                                        id="dateOfDoctorScheduleSingle"
+                                                        ng-model="formDoctorSchedule.date" autocomplete="off"
+                                                        ng-disabled="!validDate">
+                                                </div>
+                                            </div>
+
+                                            <div class="select-shift p-3">
+                                                <div class="row">
+                                                    <label for="">Ca làm việc</label>
+                                                    <div class="col-4" ng-repeat="s in listShiftDB">
+                                                        <div class="custom-checkbox checbox-checked">
+                                                            <label>
+                                                                <input ng-click="getShift(s.shiftId)" type="checkbox"
+                                                                    id="repeatCheckRegisterDoctorShift-{{s.shiftId}}-{{formDoctorSchedule.doctorId}}-{{formDoctorSchedule.date}}"
+                                                                    ng-checked="isShiftSelected(s.shiftId)"
+                                                                    ng-disabled="!validDate || isShiftBooked(s.shiftId)">
+                                                                <span>
+                                                                    {{s.name}}
+                                                                    <p class="text-danger small"
+                                                                        ng-show="isShiftBooked(s.shiftId)">*</p>
+                                                                </span>
+                                                            </label>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="card d-inline-flex mb-2 w-100">
+                                                <div class="card-body bg-light py-2 px-3 text-warning"> (*) Ca làm việc
+                                                    đã có khách hàng đặt hẹn. Không được thay đổi.
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-info pull-right" id="btnCloseForm" data-bs-dismiss="modal"
+                                ng-click="closeForm()">Đóng</button>
+                            <button class="btn btn-info pull-right" ng-click="changeDoctorSchedule()"
+                                ng-show="validDate">Đổi
+                                lịch</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Event details -->
+
+
+        </main>
+    </div>
+</div>

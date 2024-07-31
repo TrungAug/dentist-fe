@@ -1,0 +1,206 @@
+<div class="vertical dark">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'"></nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar></aside>
+        <main role="main" class="main-content" ng-controller="AdminListDistributionSupplies">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <h2 class="mb-2 p-0 page-title">Quản lý nhà phân phối</h2>
+                        <p class="card-text"></p>
+                        <div class="row align-items-center justify-content-center">
+                            <div class="col-lg col-sm-12 p-3 me-3 d-flex flex-column flex-wrap">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="distribution">
+                                                Phân phối
+                                            </label>
+                                            <input type="text" id="distribution" ng-model="distribution"
+                                                class="form-control" placeholder="Phân phối" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorDistribution">(*) Vui lòng nhập phân
+                                            phối
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="distribution">Địa
+                                                chỉ
+                                                phân phối
+                                            </label>
+                                            <input type="text" id="distribution" ng-model="address" class="form-control"
+                                                placeholder="Địa chỉ phân phối" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorAddress">(*) Vui
+                                            lòng nhập địa
+                                            chỉ</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="name">Tên phân phối
+                                            </label>
+                                            <input type="text" id="name" ng-model="name" class="form-control"
+                                                placeholder="Tên phân phối" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorName">(*) Vui
+                                            lòng nhập tên</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="email">Email
+                                                Phân phối
+                                            </label>
+                                            <input type="text" id="email" ng-model="email" class="form-control"
+                                                placeholder="Email phân phối" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorEmail">(*) Vui
+                                            lòng nhập email</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="contactPerson">Người
+                                                liên hệ
+                                            </label>
+                                            <input type="text" id="contactPerson" ng-model="contactPerson"
+                                                class="form-control" placeholder="Người liên hệ" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorContactPerson">(*) Vui lòng nhập người
+                                            liên
+                                            hệ</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="taxCode">TaxCode
+                                            </label>
+                                            <input type="text" id="taxCode" ng-model="taxCode" class="form-control"
+                                                placeholder="TaxCode" required />
+                                        </div>
+                                        <span class="text-danger" ng-show="errorTaxCode">(*) Vui
+                                            lòng nhập taxCode</span>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="form-outline mb-3">
+                                            <label class="form-label" for="note">Ghi chú
+                                            </label>
+                                            <textarea name="" id="note" ng-model="note" placeholder="Ghi chú"
+                                                class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-center mt-3">
+                                    <button ng-click="createDistributionSupplies()" class="btn btn-success m-2">
+                                        Tạo mới
+                                    </button>
+                                    <button ng-click="clearFormDistributionSupplies()" class="btn btn-info m-2">
+                                        Làm mới
+                                    </button>
+                                    <a href="#!admin/distribution-supplies" class="btn btn-danger m-2">
+
+                                        Đóng
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end section -->
+                    </div>
+                    <!-- .col-12 -->
+                </div>
+                <!-- .row -->
+            </div>
+            <!-- .container-fluid -->
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Thêm mới nhà phân phối</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-outline mb-3">
+                                        <label class="form-label" for="distribution">
+                                            Phân phối
+                                        </label>
+                                        <input type="text" id="distribution" ng-model="distribution"
+                                            class="form-control" placeholder="Phân phối" required />
+                                    </div>
+                                    <span class="text-danger" ng-show="errorDistribution">(*) Vui lòng nhập phân phối
+                                    </span>
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-outline mb-3">
+                                        <label class="form-label" for="distribution">Địa
+                                            chỉ
+                                            phân phối
+                                        </label>
+                                        <input type="text" id="distribution" ng-model="address" class="form-control"
+                                            placeholder="Địa chỉ phân phối" required />
+                                    </div>
+                                    <span class="text-danger" ng-show="errorAddress">(*) Vui lòng nhập địa
+                                        chỉ</span>
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-outline mb-3">
+                                        <label class="form-label" for="name">Tên phân phối
+                                        </label>
+                                        <input type="text" id="name" ng-model="name" class="form-control"
+                                            placeholder="Tên phân phối" required />
+                                    </div>
+                                    <span class="text-danger" ng-show="errorName">(*) Vui lòng nhập tên</span>
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-outline mb-3">
+                                        <label class="form-label" for="email">Email
+                                            Phân phối
+                                        </label>
+                                        <input type="text" id="email" ng-model="email" class="form-control"
+                                            placeholder="Email phân phối" required />
+                                    </div>
+                                    <span class="text-danger" ng-show="errorEmail">(*) Vui lòng nhập email</span>
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-outline mb-3">
+                                        <label class="form-label" for="contactPerson">Người
+                                            liên hệ
+                                        </label>
+                                        <input type="text" id="contactPerson" ng-model="contactPerson"
+                                            class="form-control" placeholder="Người liên hệ" required />
+                                    </div>
+                                    <span class="text-danger" ng-show="errorContactPerson">(*) Vui lòng nhập người liên
+                                        hệ</span>
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-outline mb-3">
+                                        <label class="form-label" for="taxCode">TaxCode
+                                        </label>
+                                        <input type="text" id="taxCode" ng-model="taxCode" class="form-control"
+                                            placeholder="TaxCode" required />
+                                    </div>
+                                    <span class="text-danger" ng-show="errorTaxCode">(*) Vui lòng nhập taxCode</span>
+                                </div>
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="form-outline mb-3">
+                                        <label class="form-label" for="note">Ghi chú
+                                        </label>
+                                        <textarea name="" id="note" ng-model="note" placeholder="Ghi chú"
+                                            class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" ng-click="createDistributionSupplies()">Save
+                                changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

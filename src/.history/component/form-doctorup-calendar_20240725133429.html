@@ -1,0 +1,188 @@
+<div class="row justify-content-center mb-3">
+  <div class="row form-booking-appointment p-3">
+    <div class="information mb-3">
+      <p class="text-muted">Cập nhật cuộc hẹn ngày
+        <span class="text-primary">{{originalDate}}. </span>
+        Bệnh nhân <span class="text-primary">{{formDoctorUp.fullName}}. </span>
+        Thời gian từ <span class="text-primary">{{formDoctorUp.startTime|timeFormat}}</span> đến <span
+          class="text-primary">{{formDoctorUp.endTime|timeFormat}}</span>
+      </p>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col form-booking-appointment-col-one">
+
+        <div class="form-group mb-3">
+          <label for="appointmentStatusDoctorUp">Trạng thái</label>
+          <select id="appointmentStatusDoctorUp" class="form-control select2" ng-model="formDoctorUp.appointmentStatus"
+            ng-options="t.appointment_StatusId as t.status for t in listAppointmentStatusBD"
+            ng-disabled="isDisabledStatus('hoàn thành')">
+          </select>
+        </div>
+
+        <div ng-class="{'disabled-div': isDisabledStatus('hoàn thành')}"></div>
+
+        <div class="custom-control custom-switch mb-4">
+          <input type="checkbox" class="custom-control-input" id="IsSelectServiceUp" ng-model="isSelectByServiceUp"
+            ng-checked="isSelectByServiceUp" ng-disabled="isDisabledStatus('hoàn thành')">
+          <label class="custom-control-label" for="IsSelectServiceUp">Chọn dịch vụ</label>
+        </div>
+
+        <div ng-show="!isSelectByServiceUp">
+          <div class="form-group mb-3">
+            <label for="dental-issues-doctorUp">Nhập triệu chứng</label>
+            <select id="dental-issues-doctorUp" class="form-control select2-multi-up" ng-model="formDoctorUp.dentalIssuesId"
+              ng-options="ds.dentalIssuesId as ds.name for ds in listDentalIssueDBUp">
+            </select>
+          </div>
+
+          <div ng-show="isShowService(true)" style="height: 250px;" class="overflow-auto mb-3">
+            <table class="table table-hover" style="cursor: pointer;">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>ID</th>
+                  <th>Tên dịch vụ</th>
+                  <th>Giá</th>
+                  <th>Số lượng</th>
+                  <th>Thời lượng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="s in listServiceByDentalIssuesDBUp" ng-click="toggleCheckbox($event, s,true)">
+                  <td>
+                    <input type="checkbox" ng-model="s.checked" ng-change="updateSelectedServices(s,true)"
+                      ng-click="$event.stopPropagation()">
+                  </td>
+                  <td>{{s.serviceId}}</td>
+                  <td>{{s.serviceName}}</td>
+                  <td>{{s.price|formatPrice}}</td>
+                  <td>
+                    <input type="number" min="1" ng-model="s.quantity" style="width: 45px; text-align: center;"
+                      id="{{s.serviceId}}" placeholder="1" ng-click="$event.stopPropagation()">
+                  </td>
+                  <td>{{s.timeEstimate}} phút</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div ng-show="isSelectByServiceUp" class="mb-3">
+          <table class="table table-hover datatables" id="dataTable-list-service-doctor-update" style="cursor: pointer;">
+            <thead>
+              <tr>
+                <th>
+                  #
+                </th>
+                <th>ID</th>
+                <th>Tên dịch vụ</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thời lượng</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="s in listServiceFromDB" ng-click="toggleCheckbox($event, s,true)">
+                <td>
+                  <input type="checkbox" ng-model="s.checked" ng-change="updateSelectedServices(s,true)"
+                    ng-click="$event.stopPropagation()">
+                </td>
+                <td>{{s.serviceId}}</td>
+                <td>{{s.serviceName}}</td>
+                <td>{{s.price|formatPrice}}</td>
+                <td>
+                  <input type="number" min="1" ng-model="s.quantity" style="width: 45px; text-align: center;"
+                    id="{{s.serviceId}}" placeholder="1" ng-click="$event.stopPropagation()">
+                </td>
+                <td>{{s.timeEstimate}} phút</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div ng-show="isContinueShow()" class="card d-inline-flex mb-3 w-100"
+          style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px;">
+          <div class="card-body bg-light text-warning p-3">
+            <p>Dịch vụ đã chọn: </p>
+            <table class="table table-borderless table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Tên dịch vụ</th>
+                  <th scope="col" class="text-right">Đơn giá</th>
+                  <th scope="col" class="text-right">Số lượng</th>
+                  <th scope="col" class="text-right">Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="s in selectedServicesUp">
+                  <th scope="row">{{s.serviceId}}</th>
+                  <td>{{s.serviceName}}</td>
+                  <td class="text-right">{{s.price | formatPrice}}</td>
+                  <td class="text-right">{{s.quantity}}</td>
+                  <td class="text-right">{{s.price*s.quantity | formatPrice}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="row mt-5">
+              <div class="col-2 text-center">
+              </div>
+              <div class="col-md-5">
+                <p hidden>temp</p>
+              </div>
+              <div class="col-md-5">
+                <div class="text-right mr-2">
+
+                  <p class="mb-2 h6">
+                    <span class="text-muted">Tổng thanh toán : </span>
+                    <span>{{getTotalPrice()|formatPrice}}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row mb-3">
+
+      <div class="custom-control custom-switch mb-3">
+        <input type="checkbox" class="custom-control-input" id="IsReExamination" ng-model="formDoctorUp.isReExamination"
+          ng-checked="formDoctorUp.isReExamination">
+        <label class="custom-control-label" for="IsReExamination">Tái khám</label>
+      </div>
+
+      <div class="mb-3" ng-show="formDoctorUp.isReExamination">
+        <div class="row">
+          <div class="col-3" ng-repeat="dateNum in initReExaminationDate">
+            <div class="custom-checkbox checbox-checked me-3">
+              <label>
+                <input type="radio" name="initReExaminationDate" id="repeatRadioTOS-{{$index}}"
+                  ng-click="onChangeReExaminationDate(dateNum.value)" ng-model="dateRequestReExamination" ng-value="dateNum.value">
+                <span>{{dateNum.value}} ngày</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="date-input1">Ngày tái khám khám</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text" id="button-addon-date"><span class="fe fe-calendar fe-16"></span>
+              </div>
+            </div>
+            <input type="text" class="form-control drgpicker-reExam" id="reExaminationDate"
+              ng-model="formDoctorUp.reExaminationDate" autocomplete="off">
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+  </div>

@@ -1,0 +1,63 @@
+<div class="vertical  dark ">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+        </nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar>
+        </aside>
+        <main role="main" class="main-content" ng-controller="AdminDoctorCalendarController">
+            <div class="container-fluid">
+                <div class="row justify-content-center mb-3">
+                    <div class="d-flex flex-items-center flex-justify-between custom-heading">
+                        <h3 class="text-muted">Lịch khám bệnh</h3>
+                    </div>
+                    <div class="custom-hr mb-3"></div>
+                    <div id='doctor-calendar-schedule'></div>
+                </div>
+
+                <div class="row justify-content-center mb-3">
+                    <div class="d-flex flex-items-center flex-justify-between custom-heading">
+                        <h3 class="text-muted">Lịch trực</h3>
+                    </div>
+                    <div class="custom-hr mb-3"></div>
+                    <div id='calendar-register-doctor-schedule-single'></div>
+                </div>
+
+            </div>
+
+
+
+            <!-- Event details -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#doctorUpdateAppointment" id="btnDoctorUpdateAppointment" hidden>
+                Cập nhật cuộc hẹn
+            </button>
+            <div class="modal fade" id="doctorUpdateAppointment" tabindex="-1"
+                aria-labelledby="doctorUpdateAppointmentLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="d-flex flex-items-center flex-justify-between" id="div-register-appointment">
+                                <h3 class="text-muted">Cập nhật lịch hẹn
+                                </h3>
+                            </div>
+                            <div class="custom-hr mb-3"></div>
+                            <button type="button" class="btn-close" id="btn-close-formDoctorUp" data-bs-dismiss="modal"
+                                aria-label="Close" hidden></button>
+                        </div>
+                        <div class="modal-body" id="doctorUpdateAppointmentBody">
+                            <div ng-include="'component/form-doctorup-calendar.html'"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <!-- <button type="button" class="btn btn-primary btn-create-appoinment"
+                                ng-click="doctorUpdateAppointment()" ng-show="!isDisabledStatus('')">Cập
+                                nhật</button> -->
+                            <button type="button" class="btn btn-outline-warning" ng-click="closeFormUp()">Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Event details -->
+        </main>
+    </div>
+</div>

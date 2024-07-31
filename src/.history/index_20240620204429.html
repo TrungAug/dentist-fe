@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dentisHub">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Nha khoa Tooth Teeth</title>
+  <link rel="icon" href="/assets/images/logo.jpg" type="image/png">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <!-- jQuery UI Smoothness theme -->
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
+
+  <!-- Bootstrap Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css">
+
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.min.css">
+
+  <!-- Other custom stylesheets -->
+  <link rel="stylesheet" href="/assets/plugins/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/assets/plugins/icofont/icofont.min.css">
+  <link rel="stylesheet" href="/assets/plugins/slick-carousel/slick/slick.css">
+  <link rel="stylesheet" href="/assets/plugins/slick-carousel/slick/slick-theme.css">
+  <link rel="stylesheet" href="/assets/css/admin/simplebar.css">
+  <link rel="stylesheet" href="/assets/css/admin/feather.css">
+  <link rel="stylesheet" href="/assets/css/admin/fullcalendar.css">
+  <link rel="stylesheet" href="/assets/css/admin/select2.css">
+  <link rel="stylesheet" href="/assets/css/admin/dropzone.css">
+  <link rel="stylesheet" href="/assets/css/admin/uppy.min.css">
+  <link rel="stylesheet" href="/assets/css/admin/jquery.steps.css">
+  <link rel="stylesheet" href="/assets/css/admin/jquery.timepicker.css">
+  <link rel="stylesheet" href="/assets/css/admin/quill.snow.css">
+  <link rel="stylesheet" href="/assets/css/admin/daterangepicker.css">
+  <link rel="stylesheet" href="/assets/css/admin/app-light.css" id="lightTheme">
+  <link rel="stylesheet" href="/assets/css/admin/app-dark.css" id="darkTheme" disabled>
+  <link rel="stylesheet" href="/assets/css/admin/drag-drop-time-shift.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+  <!-- AngularJS -->
+  <script src="/assets/js/vendor/angular.min.js"></script>
+  <script src="/assets/js/vendor/angular-route.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+  <!-- jQuery UI -->
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+  <!-- Moment.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+</head>
+
+<body id="top">
+  <main class="site-main">
+    <ng-view></ng-view>
+  </main>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.min.js"></script>
+  <!-- Other JavaScript files -->
+  <!-- <script src="/assets/js/admin/jquery.min.js"></script> -->
+  <script src="/assets/plugins/bootstrap/js/popper.js"></script>
+  <script src="/assets/js/admin/popper.min.js"></script>
+  <script src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js">
+  </script>
+  <script src="/assets/plugins/slick-carousel/slick/slick.min.js"></script>
+  <script src="/assets/plugins/counterup/jquery.waypoints.min.js"></script>
+  <script src="/assets/plugins/counterup/jquery.counterup.min.js"></script>
+  <script src="/assets/plugins/shuffle/shuffle.min.js"></script>
+  <script src="/assets/plugins/google-map/map.js"></script>
+  <script src="/assets/js/admin/simplebar.min.js"></script>
+  <script src="/assets/js/admin/daterangepicker.js"></script>
+  <script src="/assets/js/admin/jquery.stickOnScroll.js"></script>
+  <script src="/assets/js/admin/tinycolor-min.js"></script>
+  <script src="/assets/js/admin/config.js"></script>
+  <script src='/assets/js/admin/jquery.dataTables.min.js'></script>
+  <script src='/assets/js/admin/dataTables.bootstrap4.min.js'></script>
+  <script src="/assets/js/admin/d3.min.js"></script>
+  <script src="/assets/js/admin/topojson.min.js"></script>
+  <script src="/assets/js/admin/datamaps.all.min.js"></script>
+  <script src="/assets/js/admin/datamaps-zoomto.js"></script>
+  <script src="/assets/js/admin/datamaps.custom.js"></script>
+  <script src="/assets/js/admin/Chart.min.js"></script>
+  <script>
+    Chart.defaults.global.defaultFontFamily = base.defaultFontFamily;
+    Chart.defaults.global.defaultFontColor = colors.mutedColor;
+  </script>
+  <script src="/assets/js/admin/gauge.min.js"></script>
+  <script src="/assets/js/admin/jquery.sparkline.min.js"></script>
+  <script src="/assets/js/admin/apexcharts.min.js"></script>
+  <script src="/assets/js/admin/apexcharts.custom.js"></script>
+  <script src='/assets/js/admin/fullcalendar.js'></script>
+  <script src='/assets/js/admin/fullcalendar.custom.js'></script>
+  <script src='/assets/js/admin/jquery.mask.min.js'></script>
+  <script src='/assets/js/admin/select2.min.js'></script>
+  <script src='/assets/js/admin/jquery.steps.min.js'></script>
+  <script src='/assets/js/admin/jquery.validate.min.js'></script>
+  <script src='/assets/js/admin/jquery.timepicker.js'></script>
+  <script src='/assets/js/admin/dropzone.min.js'></script>
+  <script src='/assets/js/admin/uppy.min.js'></script>
+  <script src='/assets/js/admin/quill.min.js'></script>
+  <script src="/assets/js/app/app.js"></script>
+  <script src="/assets/js/admin/apps-admin.js"></script>
+  <script src="/assets/js/app/adminDashboardController.js"></script>
+  <script src="/assets/js/app/adminListAppoinment.js"></script>
+  <script src="/assets/js/app/adminListService.js"></script>
+  <script src="/assets/js/app/adminDoctorController.js"></script>
+  <script src="/assets/js/app/adminDoctorScheduleController.js"></script>
+  <script src="/assets/js/app/adminCalendar.js"></script>
+  <script src="/assets/js/app/adminShiftController.js"></script>
+  <script src="/assets/js/app/adminDentalStaffController.js"></script>
+</body>
+
+</html>

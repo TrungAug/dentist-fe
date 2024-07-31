@@ -1,0 +1,222 @@
+<!--================ Start Header Menu Area =================-->
+<header class="header_area" ng-include="'component/header.html'"></header>
+<!--================ End Header Menu Area =================-->
+<section class="page-title bg-1">
+    <div class="overlay overlay-doctorBooking"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="block text-center">
+            <span class="text-white">Booking</span>
+            <h1 class="text-capitalize mb-5 text-lg">Đặt lịch - chọn bác sĩ</h1>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="booking-scrolling-wrapper-flexbox">
+            <!-- Thanh cuộn ngang -->
+            <div class="booking-specialty-item" ng-click="selectSpecialty(0)" ng-class="{ 'selected-specialty': selectedSpecialtyId === 0 }">
+                Chọn tất cả
+            </div>
+            <div class="booking-specialty-item" ng-repeat="s in listSpecialtyDB" ng-click="selectSpecialty(s.specialtyId)" ng-class="{ 'selected-specialty': selectedSpecialtyId === s.specialtyId }">
+                {{ s.specialtyName }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row booking-doctor-page">
+        <div class="col-md-12">
+          <div class="booking-scrolling-wrapper-flexbox">
+            <!-- Thanh cuộn ngang chứa các thẻ hình ảnh của bác sĩ -->
+            <div class="booking-doctor-item" ng-repeat="doctor in listDoctorsDB"  ng-click="selectDoctor(doctor.doctorId)">
+              <img ng-src="https://htmediagroup.vn/wp-content/uploads/2022/01/Anh-bac-si-3-min.jpg" alt="{{ doctor.name }}" class="booking-doctor-image">
+              <p style="font-weight: bolder;">{{ doctor.fullName }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section> 
+<section class="main-page">
+  <div class="row main-page-booking">
+      <div class="col-12 main-page-booking-card" ng-show="booleanDoctorChoosen">
+          <div class="doctor-card-image-parent">
+              <img src="https://htmediagroup.vn/wp-content/uploads/2022/08/Anh-profile-bac-si-min.jpg"
+                  class="doctor-card-image">
+          </div>
+          <div class="row doctor-card-details">
+              <div class="col-12 doctor-card-details-specialty">
+                    <strong class="doctor-specialtyName" style="color: white;">
+                        CK: {{doctorModel.specialty.specialtyName}}
+                    </strong>
+              </div>
+              <div class="col-12 doctor-card-details-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  <p>Bác Sĩ: {{doctorModel.fullName}}</p> 
+              </div>
+          </div>
+      </div>
+      <div class="col-12 mt-5" id='calendar-book-appointment'></div>
+  </div>
+</section>
+<div class="modal fade" id="modalBookAppointment" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content" ng-show="showConfirmForm">
+            <div class="modal-header">
+                <div class="row" style="width: 100%;">
+                    <p class="col-lg-3"><img src="/assets/images/logo.png" alt="" class="img-logo-form"></p>
+                    <p class="col-lg-6 modal-title fw-bolder" id="modalBookAppointmentLabel">
+                        <span class="block-span fs-1" style="color: #e3315e;">ĐẶT LỊCH HẸN</span>
+                        <span class="block-span fs-4" style="color: #ee6587;" >VỚI BÁC SĨ: {{doctorModel.fullName}} </span>
+                    </p>
+                    <p class="col-lg-3 small" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <span>Số hóa đơn (Number): 0</span> <br>
+                        <span >Họ tên (Full Name): {{patientLogged.fullName}}</span> <br>  
+                        <span>Thời gian (Date): {{dateChosen}}</span> <br>
+                    </p>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="mt-3 modal-body">
+                <form id="appointmentForm" class="row needs-validatio" novalidate>
+                    <div class="overflow-auto col-lg-6 form-group mb-3" style="height: 120px;">
+                        <label for="formSymptom" class="col-form-label fw-bolder">Triệu chứng</label>
+                        <select id="formSymptom" class="form-control select2-multi" ng-model="selectedIssues" ng-options="issue.dentalIssuesId as issue.name for issue in listDentalIssuesDB track by issue.dentalIssuesId" ng-change="loadTreatmeantAndServiceByIssue()" multiple>
+                        </select>
+                        <div id="formSymptom-feedback" ng-if="symtomTrue" style="width: 100%; margin-top: 0.25rem; font-size: 80%; color: #dc3545;">Chọn triệu chứng là bắt buộc</div>
+                    </div>
+                    <div class="overflow-auto col-lg-6 form-group mb-3" style="height: 120px;">
+                        <label class="col-form-label fw-bolder">Khuyến nghị</label>
+                        <p class="fst-italic small m-0 ng-binding">{{ getTreatmentNamesString() }}</p>
+                    </div>
+                    <div class="overflow-auto col-lg-12 form-group mb-3" style="height: 200px;" >
+                        <table class="table tableService">
+                            <tbody>
+                                <tr>   
+                                    <th></th> 
+                                    <th class="fw-bolder">Tên dịch vụ</th>
+                                    <th class="fw-bolder">Giá tiền</th>
+                                    <th class="fw-bolder">Thời gian ước tính</th>
+                                </tr>
+                                <tr ng-if="foundServices.length == 0">
+                                    <td>
+                            
+                                    </td>
+                                    <td>Chưa có dịch vụ nào</td>
+                                    <td class="text-end"></td>
+                                    <td class="text-end"></td>
+                                </tr>
+                                <tr ng-repeat="service in foundServices" ng-click="toggleRowCheckbox(service)" ng-if="foundServices.length > 0" >
+                                    <td>
+                                        <input type="checkbox" ng-model="service.selected" ng-change="updateSelectAll()">
+                                    </td>
+                                    <td>{{service.service.serviceName}}</td>
+                                    <td class="text-end">{{service.service.price | currency:'':0}} VND</td>
+                                    <td class="text-end">{{service.service.timeEstimate}} phút</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                        
+                    <div class="col-lg-12 text-center p-3">
+                        <p class="textSuggest m-0 fw-bolder">Tổng số tiền dịch vụ đã chọn: {{totalPrice | currency:'':0}} VND</p>
+                        <p class="textSuggest m-0 fw-bolder">Thời lượng sử dụng dịch vụ: {{totalTime}} phút</p>
+                        <p class="textSuggest m-0 fw-bolder ng-hide" ng-show="getRecommendation() == 0">Bạn cần liên hệ trực tiếp nhân viên để được hướng dẫn kỹ hơn</p>
+                        <p class="textSuggest fw-bolder m-0 " ng-show="!getRecommendation() == 0">Lưu ý (*): Khung thời gian khám nên chọn liên tục để tránh làm gián đoạn việc điều trị!</p>
+                    </div>
+                    
+                    <div class="col-lg-6 form-group mb-3">
+                        <label for="formShift" class="col-form-label fw-bolder">Chọn buổi khám</label>
+                        <select id="formShift" class="form-control" ng-model="selectedShift" ng-options="schedule.shift.name for schedule in getListDoctorScheduleByDoctorId" ng-change="loadShiftHours(selectedShift)" required ng-disabled="!hasSelectedService">
+                            <option value="">Chọn buổi khám</option>
+                        </select>
+                        <div id="formShift-feedback" class="invalid-feedback" ng-show="appointmentForm.formShift.$touched && appointmentForm.formShift.$invalid && hasSelectedService">Chọn buổi khám là bắt buộc</div>
+                    </div>
+                    
+                    <div class="col-lg-6 form-group mb-3">
+                        <label for="formShiftHour" class="col-form-label fw-bolder">Chọn giờ hẹn</label>
+                        <select id="formShiftHour" class="form-control select2-multi" ng-model="selectedShiftHour" ng-options="(hour.beginTime + ' - ' + hour.endTime) for hour in listShiftHours track by hour.timeOfShiftId" ng-disabled="!selectedShift || !hasSelectedService" ng-change="loadEnoughHour()" multiple required>
+                        </select>
+                        <div id="formShiftHour-feedback" class="invalid-feedback" ng-show="appointmentForm.formShiftHour.$touched && appointmentForm.formShiftHour.$invalid && hasSelectedService">Chọn giờ hẹn là bắt buộc</div>
+                       
+                    </div>
+                    <div class="col-lg-6">
+                    </div>
+                    <div class="col-lg-6 fw-bolder m-0">
+                        <span class="text-danger" ng-show="getRecommendation() == 0 || hourLenghtSelected != getRecommendation() ">Lưu ý (*): Quý khách nên chọn đủ số lượng ca khám ước tính! <span class="text-danger" style="color: #001a4e;">( {{hourLenghtSelected}} / {{getRecommendation()}} )</span></span>
+                        <span class="text-danger" ng-show="hourLenghtSelected == getRecommendation() && hourLenghtSelected != 0 && !isCorrectBookingHoour()">Lưu ý (*): Quý khách nên chọn khung thời gian liền kề tránh dịch vụ bị gián đoạn !</span>
+                        <span class="textSuggest"ng-show="hourLenghtSelected == getRecommendation() && hourLenghtSelected != 0 && isCorrectBookingHoour()">Quý khách đã chọn đủ số lượng ca khám ước tính ( {{hourLenghtSelected}}/ {{getRecommendation()}} )</span>
+                    </div>
+                    <div class="col-lg-12 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="fs-5 card-title text-primary-emphasis fw-bolder">Ghi chú</p>
+                                <div class="form-floating">
+                                    <textarea ng-model="formAppointmentRequestNote" class="form-control" placeholder="Nhập triệu chứng" id="formAppointmentRequestNote" style="height: 150px" ng-disabled="!hasSelectedService"></textarea>
+                                    <label for="formAppointmentRequestNote">Nhập triệu chứng</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-12 mb-2">
+                        <button type="button" class="btn btn-success btn-create-appoinment" ng-click="showConfirmModal()" ng-disabled="!hasSelectedService">Lưu lại</button>
+                        <button type="button" class="btn btn-warning" ng-click="resetForm()">Làm trống</button>
+                    </div>                    
+                </form>
+            </div>
+        </div>
+        <div class="modal-content" ng-show="!showConfirmForm">
+            <div class="modal-header">
+                <div class="row">
+                    <p class="col-lg-3"><img src="/assets/images/logo.png" alt="" class="img-fluid"></p>
+                    <p class="col-lg-9 modal-title fs-1 text-primary-emphasis text-center fw-bolder" id="modalConfirmAppointmentLabel">Xác nhận thông tin đặt lịch hẹn</p>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body-accept">
+                <div class="row">
+                    <strong class="col-lg-3 text-right">Bác sĩ:</strong> <span class="col-lg-9 bordered">{{doctorModel.fullName}}</span>
+                </div>
+                <div class="row">
+                    <strong class="col-lg-3 text-right">Tên bệnh nhân:</strong> <span class="col-lg-9 bordered">{{patientLogged.fullName}}</span>
+                </div>
+                <div class="row">
+                    <strong class="col-lg-3 text-right">Ngày hẹn:</strong> <span class="col-lg-9 bordered">{{daySelected}}</span>
+                </div>
+                <div class="row">
+                    <strong class="col-lg-3 text-right">Giờ hẹn:</strong> <span class="col-lg-9 bordered">{{ getTimeString() }}</span>
+                </div>
+                <div class="row">
+                    <strong class="col-lg-3 text-right">Triệu chứng:</strong> <span class="col-lg-9 bordered">{{selectedIssuesString}}</span>
+                </div>
+                <div class="row">
+                    <strong class="col-lg-3 text-right">Đơn giá:</strong> <span class="col-lg-9 bordered">{{totalPrice | currency:'':0}} VND</span>
+                </div>
+                <div class="row" ng-if="formAppointmentRequestNote">
+                    <strong class="col-lg-3 text-right">Ghi chú:</strong> <span class="col-lg-9 bordered">{{formAppointmentRequestNote}}</span>
+                </div>
+            </div>                    
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" ng-click="showConfirmForm = true;">Hủy</button>
+                <button type="button" class="btn btn-primary" ng-click="confirmSaveAppointment()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="color-legend-card" ng-show="booleanDoctorChoosen">
+    <h5>Chú thích màu sắc</h5>
+    <ul>
+        <li><span class="color-box" style="background-color: #8bf7c1;"></span>Ngày có thể đặt lịch</li>
+        <li><span class="color-box" style="background-color: #fffadf;"></span>Ngày hôm nay</li>
+        <li><span class="color-box" style="background-color: #ecf2ff;"></span>Ngày không thể đặt lịch</li>
+    </ul>
+</div>
+
+
+  
+<!-- footer Start -->
+<footer class="footer section gray-bg" ng-include="'component/footer.html'"></footer>
+<!--================ End footer Area  =================-->

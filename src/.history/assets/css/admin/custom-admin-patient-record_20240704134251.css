@@ -1,0 +1,18 @@
+.custom-hr {
+    margin-left: -16px;
+    margin-right: -16px;
+    display: block;
+    height: 1px;
+    background-color: var(--borderColor-default, var(--color-border-default, #d0d7de));
+    margin-top: 0px;
+}
+
+.btn-all-customer,.btn-all-time{
+    width: 190px;
+    height: 35px;
+    border-radius: 5px;
+    border-color: #ebedf0;
+}
+.btn-all-customer{
+    margin-right: 10px;
+}

@@ -1,0 +1,8 @@
+.jpIrPr {
+    margin-left: -16px;
+    margin-right: -16px;
+    display: block;
+    height: 1px;
+    background-color: var(--borderColor-default, var(--color-border-default, #d0d7de));
+    margin-top: 0px;
+}

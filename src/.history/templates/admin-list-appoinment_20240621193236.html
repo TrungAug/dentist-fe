@@ -1,0 +1,279 @@
+<div class="vertical  dark ">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+        </nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar>
+        </aside>
+        <main role="main" class="main-content" ng-controller="AdminListAppoinment">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <!-- <h2 class="mb-2 p-0 page-title">Danh sách các cuộc hẹn</h2>
+                        <p class="card-text"></p> -->
+                        <div class="row my-4">
+                            <!-- Small table -->
+                            <div class="col-md-12">
+                                <div class="card shadow">
+                                    <div class="card-body">
+                                        <!-- Tabs Navigation -->
+                                        <ul class="nav nav-tabs nav-justified mb-3">
+                                            <li class="nav-item">
+                                                <a class="nav-link" ng-class="{active: isSelected(-1)}"
+                                                    ng-click="selectTab(-1,$event)" href="#">Cuộc hẹn sắp diễn ra</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" ng-class="{active: isSelected(-2)}"
+                                                    ng-click="selectTab(-2,$event)" href="#">Danh sách các cuộc hẹn</a>
+                                            </li>                                           
+                                        </ul>
+                                        <!-- Tabs Content -->
+                                        <div class="tab-content">
+                                            <div class="tab-pane" ng-class="{ 'active show': isSelected(-1) }">
+                                                cuộc hẹn sâp
+                                            </div>
+                                            <div class="tab-pane" ng-class="{ 'active show': isSelected(-2) }">
+                                                <div class="row mt-5 d-flex flex-start">
+                                                    <div class="col-lg-3 me-3 overflow-auto"
+                                                        style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px; height: 400px;">
+                                                        <div class="form-group">
+                                                            <label for="formAppoinmentSearchDate">Ngày làm việc</label>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <div class="input-group-text"
+                                                                        id="button-addon-date"><span
+                                                                            class="fe fe-calendar fe-16"></span></div>
+                                                                </div>
+                                                                <input type="text" class="form-control drgpicker"
+                                                                    id="formAppoinmentSearchDate"
+                                                                    ng-model="formAppoinmentFilter.filterDate"
+                                                                    autocomplete="off">
+                                                            </div>
+                                                        </div>
+                                                        <div class="custom-checkbox checbox-checked"
+                                                            ng-repeat="d in listDoctorDB">
+                                                            <label>
+                                                                <input type="checkbox"
+                                                                    id="repeatCheckSearchDoctor-{{d.doctorId}}"
+                                                                    ng-model="formAppoinmentFilter.selectedDoctor"
+                                                                    ng-checked="formAppoinmentFilter.selectedDoctor"><span>{{d.fullName}}</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-8 overflow-auto" style="height: 400px;">
+                                                        <ul class="nav nav-tabs nav-justified mb-3">
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" ng-class="{active: isSelected(-1)}"
+                                                                    ng-click="selectSubTab(-1,$event)" href="#">Cuộc hẹn sắp diễn ra</a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" ng-class="{active: isSelected(-2)}"
+                                                                    ng-click="selectSubTab(-2,$event)" href="#">Danh sách các cuộc hẹn</a>
+                                                            </li>                                           
+                                                        </ul>
+                                                        <div class="tab-content">
+                                                            <div class="tab-pane" ng-class="{ 'active show': isSelectedSubTab(-1) }">
+                                                                cuộc hẹn sâp
+                                                            </div>
+                                                        </div>
+
+                                                        <table class="table datatables" id="dataTable-list-appoinment">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Tên Khách hàng</th>
+                                                                    <th>Điện thoại</th>
+                                                                    <th>Thời gian đăng ký khám</th>
+                                                                    <th>Thời gian dự kiến</th>
+                                                                    <th>Thời gian hoàn thành</th>
+                                                                    <th>Bác sĩ</th>
+                                                                    <th>Dịch vụ</th>
+                                                                    <th>Ngày tái khám</th>
+                                                                    <th>Trạng thái</th>
+                                                                    <th>Thao tác</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>368</td>
+                                                                    <td>Đặng Vĩ Khang</td>
+                                                                    <td>(478) 446-9234</td>
+                                                                    <td>2024-06-14T17:00:00.000Z</td>
+                                                                    <td>2024-06-14T17:00:00.000Z</td>
+                                                                    <td>2024-06-14T17:00:00.000Z</td>
+                                                                    <td>Đinh Lê Hoàn</td>
+                                                                    <td>Niềng răng</td>
+                                                                    <td>2024-06-14T17:00:00.000Z</td>
+                                                                    <td>Đang điều trị</td>
+                                                                    <td><button
+                                                                            class="btn btn-sm dropdown-toggle more-horizontal"
+                                                                            type="button" data-toggle="dropdown"
+                                                                            aria-haspopup="true" aria-expanded="false">
+                                                                            <span class="text white">...</span>
+                                                                        </button>
+                                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                                            <a class="dropdown-item" href="#">Sửa</a>
+                                                                            <a class="dropdown-item" href="#">Hủy</a>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="tab-pane" ng-class="{ 'active show': isSelected(d.doctorId) }"
+                                                ng-repeat="d in listDoctorDB" id="doctor-{{d.doctorId}}">
+                                                <div class="row my-4">
+                                                    <div class="col-md-12">
+                                                        <div id='calendar-doctor-{{d.doctorId}}'></div>
+                                                    </div>
+                                                </div>
+                                            </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- simple table -->
+                    </div> <!-- end section -->
+                </div> <!-- .col-12 -->
+            </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
+
+
+
+
+    <div class="modal fade modal-notif modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="defaultModalLabel">Notifications</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group list-group-flush my-n3">
+                        <div class="list-group-item bg-transparent">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="fe fe-box fe-24"></span>
+                                </div>
+                                <div class="col">
+                                    <small><strong>Package has uploaded successfull</strong></small>
+                                    <div class="my-0 text-muted small">Package is zipped and uploaded</div>
+                                    <small class="badge badge-pill badge-light text-muted">1m ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item bg-transparent">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="fe fe-download fe-24"></span>
+                                </div>
+                                <div class="col">
+                                    <small><strong>Widgets are updated successfull</strong></small>
+                                    <div class="my-0 text-muted small">Just create new layout Index, form, table
+                                    </div>
+                                    <small class="badge badge-pill badge-light text-muted">2m ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item bg-transparent">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="fe fe-inbox fe-24"></span>
+                                </div>
+                                <div class="col">
+                                    <small><strong>Notifications have been sent</strong></small>
+                                    <div class="my-0 text-muted small">Fusce dapibus, tellus ac cursus commodo
+                                    </div>
+                                    <small class="badge badge-pill badge-light text-muted">30m ago</small>
+                                </div>
+                            </div> <!-- / .row -->
+                        </div>
+                        <div class="list-group-item bg-transparent">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="fe fe-link fe-24"></span>
+                                </div>
+                                <div class="col">
+                                    <small><strong>Link was attached to menu</strong></small>
+                                    <div class="my-0 text-muted small">New layout has been attached to the menu
+                                    </div>
+                                    <small class="badge badge-pill badge-light text-muted">1h ago</small>
+                                </div>
+                            </div>
+                        </div> <!-- / .row -->
+                    </div> <!-- / .list-group -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Clear
+                        All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade modal-shortcut modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="defaultModalLabel">Shortcuts</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body px-5">
+                    <div class="row align-items-center">
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-success justify-content-center">
+                                <i class="fe fe-cpu fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Control area</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-activity fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Activity</p>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-droplet fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Droplet</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-upload-cloud fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Upload</p>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-users fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Users</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-settings fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Settings</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </main>
+</div>
+</div>
