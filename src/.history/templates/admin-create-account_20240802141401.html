@@ -1,0 +1,59 @@
+<div class="vertical  dark ">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+        </nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar>
+        </aside>
+        <main role="main" class="main-content" ng-controller="AdminCreateAccountController">
+            <div class="container-fluid">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                    </ol>
+                </nav>
+                <div class="row justify-content-center mb-3">
+                    <label for="">Chọn đối tượng</label>
+                    <div class="col-4" ng-repeat="data in dataOptions">
+                        <div class="custom-checkbox checbox-checked">
+                            <label>
+                                <input ng-click="getOption(data)" type="radio" id="dataOption-{{data.id}}-{{data.name}}"
+                                    name="option">
+                                <span> {{data.name}} </span>
+                            </label>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center p-3" ng-show="selectedOption!=0"
+                    style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 5px;">
+                    
+                    <div class="row">
+                        <div class="col-6" ng-if="selectedOption==1">
+                            <label for="selectedOption1">Chọn người dùng</label>
+                            <select id="selectedOption1" class="form-control select2" ng-model="accForm.patientId"
+                                ng-options="o.patientId as o.fullName for o in dataObject">
+                            </select>
+                        </div>
+                        <div class="col-6" ng-if="selectedOption==2">
+                            <label for="selectedOption2">Chọn người dùng</label>
+                            <select id="selectedOption2" class="form-control select2" ng-model="accForm.doctorId"
+                                ng-options="o.doctorId as o.fullName for o in dataObject">
+                            </select>
+                        </div>
+                        <div class="col-6" ng-if="selectedOption==3">
+                            <label for="selectedOption3">Chọn người dùng</label>
+                            <select id="selectedOption3" class="form-control select2"
+                                ng-model="accForm.dentalStaffId"
+                                ng-options="o.dentalStaffId as o.fullname for o in dataObject">
+                            </select>
+                        </div>
+                    </div>
+                    
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>

@@ -1,0 +1,957 @@
+<div class="vertical  dark ">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+        </nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'">
+        </aside>
+        <main role="main" class="main-content" ng-controller="AdminListInvoice">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                </ol>
+            </nav>
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <!-- <h2 class="mb-2 p-0 page-title">Danh sách các cuộc hẹn</h2>
+                        <p class="card-text"></p> -->
+                        <div class="row my-4">
+                            <!-- Small table -->
+                            <div class="col-md-12">
+                                <div class="card shadow">
+                                    <div class="card-body">
+                                        <!-- Tabs Navigation -->
+                                        <ul class="nav nav-tabs nav-justified mb-3">
+                                            <li class="nav-item">
+                                                <a class="nav-link" ng-class="{active: isSelected(-1)}"
+                                                    ng-click="selectTab(-1,$event)" href="#">Danh sách hóa đơn</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" ng-class="{active: isSelected(-2)}"
+                                                    ng-click="selectTab(-2,$event)" href="#">Hóa đơn thành công</a>
+                                            </li>
+                                        </ul>
+                                        <!-- Tabs Content -->
+                                        <div class="tab-content">
+                                            <div class="tab-pane" ng-class="{ 'active show': isSelected(-1) }">
+                                                <button class="btn btn-outline-primary" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapseFilterAppoinment"
+                                                    aria-expanded="false" aria-controls="collapseFilterAppoinment">
+                                                    <i class="bi bi-funnel"></i>
+                                                    Bộ lọc
+                                                </button>
+
+                                                <button class="btn btn-outline-success" type="button"
+                                                    ng-click="getListAppointmentServiceClear()">
+                                                    <i class="bi bi-arrow-clockwise"></i>
+                                                    Làm mới
+                                                </button>
+                                                <div class="collapse m-3" id="collapseFilterAppoinment">
+                                                    <div class="card card-body">
+                                                        <div class="row">
+                                                            <div class="col-lg-6 overflow-auto">
+                                                                <div class="form-group">
+                                                                    <label for="formAppoinmentSearchDate">Lọc theo
+                                                                        ngày</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <div class="input-group-text"
+                                                                                id="button-addon-date"><span
+                                                                                    class="fe fe-calendar fe-16"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <input type="text"
+                                                                            class="form-control drgpicker"
+                                                                            id="formAppoinmentSearchDate"
+                                                                            ng-model="formAppoinmentFilter.filterDate"
+                                                                            autocomplete="off">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-3">
+                                                                <button class="btn btn-light"
+                                                                    style="color: blue;border: 2px solid blue;"
+                                                                    ng-click="filterDate()">Tìm
+                                                                    kiếm</button>
+                                                            </div>
+                                                            <div class=" col-lg-3">
+                                                                <Bỏ class="btn btn-light"
+                                                                    style="color: rgb(0, 0, 0);border: 2px solid  rgb(0, 0, 0); float: right;"
+                                                                    ng-click="getListAppointmentServiceClear()">
+                                                                    Bỏ
+                                                                    tìm kiếm
+                                                                    </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <table class="table table-hover datatables" id="dataTable-list-invoice">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>STT</th>
+                                                            <th>Ngày tạo</th>
+                                                            <th>Họ và tên bệnh nhân</th>
+                                                            <th>Dịch vụ</th>
+                                                            <th>Tổng tiền</th>
+                                                            <th>Trạng thái</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="appointmentWithServices in appointments">
+                                                            <td>{{
+                                                                $index +1 }}
+                                                            </td>
+                                                            <td>{{
+                                                                appointmentWithServices.appointment.appointmentDate |
+                                                                date:'dd/MM/yyyy'}}
+                                                            </td>
+                                                            <td>{{
+                                                                appointmentWithServices.appointment.patient.fullName }}
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                    ng-repeat="service in appointmentWithServices.services">
+                                                                    {{ service.serviceName
+                                                                    }} - (Giá:{{(service.price).toLocaleString('vi',
+                                                                    { style: 'currency', currency: 'VND' }) }})<span
+                                                                        ng-if="$index < appointmentWithServices.services.length - 1">,<br>
+                                                                        <hr>
+                                                                    </span><span
+                                                                        ng-if="$index === appointmentWithServices.services.length - 1">.</span>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                {{
+                                                                calculateTotalPrice(appointmentWithServices.services).toLocaleString('vi',
+                                                                { style: 'currency', currency: 'VND' }) }}
+                                                            </td>
+                                                            <td>
+                                                                <div
+                                                                    ng-if="appointmentWithServices.services.length > 0">
+                                                                    <span
+                                                                        ng-style="{'color': getStatusColor(appointmentWithServices.status)}">
+                                                                        {{appointmentWithServices.status ? "Đã thanh
+                                                                        toán" : "Chưa thanh toán"}}
+                                                                    </span>
+                                                                </div>
+                                                                <div
+                                                                    ng-if="appointmentWithServices.services.length <= 0">
+                                                                    <span style="color: orange;">Cuộc hẹn đang xử
+                                                                        lí</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    class="btn btn-sm dropdown-toggle more-horizontal"
+                                                                    type="button" data-toggle="dropdown"
+                                                                    aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text white">...</span>
+                                                                </button>
+                                                                <div class="dropdown-menu dropdown-menu-right"
+                                                                    style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px;">
+                                                                    <a class="dropdown-item "
+                                                                        ng-click="editInvoice(appointmentWithServices)"
+                                                                        href="#" style="font-size: 18px;color: #666666"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#myModalDetail">Xem chi tiết
+                                                                    </a>
+                                                                    <a class="dropdown-item text-primary"
+                                                                        ng-click="editInvoice(appointmentWithServices)"
+                                                                        href="#" style="font-size: 18px;"
+                                                                        data-bs-toggle="modal" data-bs-target="#myModal"
+                                                                        ng-show="!appointmentWithServices.status && appointmentWithServices.services.length > 0">Tiến
+                                                                        hành thanh
+                                                                        toán</a>
+                                                                    <!-- <a class="dropdown-item text-danger"
+                                                                        ng-click="deleteAppoinment(a,$event)" href="#"
+                                                                        style="font-size: 18px;"
+                                                                        ng-show="!appointmentWithServices.status  > 0">Hủy
+                                                                        hóa đơn</a> -->
+                                                                </div>
+                                                            </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                    <!-- modal Thanh toán --------------------------------------------------->
+                                                    <div class="modal fade" id="myModal">
+                                                        <div class="modal-dialog  modal-xl">
+                                                            <div class="modal-content">
+
+                                                                <!-- Modal Header -->
+                                                                <div class="modal-header">
+                                                                    <h2 class="modal-title">Thanh toán hóa đơn</h2>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"></button>
+                                                                </div>
+
+                                                                <!-- Modal body -->
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Appointment Details -->
+                                                                            <h4>Cuộc hẹn</h4>
+                                                                            <p><strong>Mã cuộc hẹn:</strong>
+                                                                                {{
+                                                                                editInvoiceForm.appointment.appointmentId
+                                                                                }}</p>
+                                                                            <p><strong>Ngày tạo:</strong> {{
+                                                                                editInvoiceForm.appointment.createAt |
+                                                                                date:'dd/MM/yyyy'}}
+                                                                            </p>
+                                                                            <p><strong>Ghi chú:</strong> {{
+                                                                                editInvoiceForm.appointment.note }}
+                                                                            </p>
+                                                                            <p><strong>Loại dịch vụ:</strong> {{
+                                                                                editInvoiceForm.appointment.appointmentType.typeName
+                                                                                }}
+                                                                            </p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Patient Record -->
+                                                                            <h4>Hồ sơ bệnh án</h4>
+                                                                            <p><strong>Ngày tạo hồ sơ bệnh án:</strong>
+                                                                                {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.createAt
+                                                                                |
+                                                                                date:'dd/MM/yyyy'}}</p>
+                                                                            <p><strong>Tình trạng hiện tại: </strong> {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.currentCodition
+                                                                                }}</p>
+                                                                            <p><strong>Tái khám:</strong> {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.reExamination
+                                                                                }}</p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Patient Details -->
+                                                                            <h4>Bệnh nhân</h4>
+                                                                            <p><strong>Họ và tên:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.fullName
+                                                                                }}</p>
+                                                                            <p><strong>Số điện thoại:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.phoneNumber
+                                                                                }}
+                                                                            </p>
+                                                                            <p><strong>Ngày sinh:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.birthday|
+                                                                                date:'dd/MM/yyyy'
+                                                                                }}</p>
+                                                                            <p><strong>Tuổi:</strong> {{
+                                                                                editInvoiceForm.patientAge
+                                                                                }} Tuổi</p>
+                                                                            <p><strong>Giới tính:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.gender==
+                                                                                'MALE' ? "Nam" : "Nữ"
+                                                                                }}</p>
+                                                                            <p><strong>CMND/CCCD:</strong> {{
+                                                                                editInvoiceForm.patient.citizenIdentificationNumber
+                                                                                }}</p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Service Details -->
+                                                                            <h4>Dịch vụ</h4>
+                                                                            <p>
+                                                                                <span
+                                                                                    ng-repeat="l in editInvoiceForm.services"><br>
+                                                                                    - {{l.serviceName}} (Giá:
+                                                                                    {{(l.price).toLocaleString('vi',
+                                                                                    { style: 'currency', currency: 'VND'
+                                                                                    })}}, {{l.timeEstimate}} phút)
+                                                                                </span>
+                                                                            </p>
+
+                                                                        </div>
+                                                                        <div class="col-lg-12">
+                                                                            <hr style="height: 4px;">
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Appointment Service Details -->
+                                                                            <h4>Thành tiền</h4>
+                                                                            <h4>
+                                                                                <p><strong>Tổng tiền:</strong> {{
+                                                                                    (editInvoiceForm.totalAmount).toLocaleString('vi',
+                                                                                    { style: 'currency', currency: 'VND'
+                                                                                    })
+                                                                                    }}</p>
+                                                                                <p><strong>Thành chữ:</strong>
+                                                                                    {{editInvoiceForm.text}} đồng
+                                                                                </p>
+                                                                            </h4>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+
+                                                                <!-- Modal footer -->
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-primary"
+                                                                        ng-click="payments()">Thanh
+                                                                        toán</button>
+                                                                    <button type="button" class="btn btn-danger"
+                                                                        data-bs-dismiss="modal">Đóng</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- modal Thanh toán--------------------------------------------------->
+                                                    <!-- modal detail --------------------------------------------------->
+                                                    <div class="modal fade" id="myModalDetail">
+                                                        <div class="modal-dialog  modal-xl">
+                                                            <div class="modal-content">
+
+                                                                <!-- Modal Header -->
+                                                                <div class="modal-header">
+                                                                    <h2 class="modal-title">Chi tiết hóa đơn</h2>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"></button>
+                                                                </div>
+
+                                                                <!-- Modal body -->
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Appointment Details -->
+                                                                            <h4>Cuộc hẹn</h4>
+                                                                            <p><strong>Mã cuộc hẹn:</strong>
+                                                                                {{
+                                                                                editInvoiceForm.appointment.appointmentId
+                                                                                }}</p>
+                                                                            <p><strong>Ngày tạo:</strong> {{
+                                                                                editInvoiceForm.appointment.createAt |
+                                                                                date:'dd/MM/yyyy'}}
+                                                                            </p>
+                                                                            <p><strong>Ghi chú:</strong> {{
+                                                                                editInvoiceForm.appointment.note }}
+                                                                            </p>
+                                                                            <p><strong>Loại dịch vụ:</strong> {{
+                                                                                editInvoiceForm.appointment.appointmentType.typeName
+                                                                                }}
+                                                                            </p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Patient Record -->
+                                                                            <h4>Hồ sơ bệnh án</h4>
+                                                                            <p><strong>Ngày tạo hồ sơ bệnh án:</strong>
+                                                                                {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.createAt
+                                                                                |
+                                                                                date:'dd/MM/yyyy'}}</p>
+                                                                            <p><strong>Tình trạng hiện tại: </strong> {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.currentCodition
+                                                                                }}</p>
+                                                                            <p><strong>Tái khám:</strong> {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.reExamination
+                                                                                }}</p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Patient Details -->
+                                                                            <h4>Bệnh nhân</h4>
+                                                                            <p><strong>Họ và tên:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.fullName
+                                                                                }}</p>
+                                                                            <p><strong>Số điện thoại:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.phoneNumber
+                                                                                }}
+                                                                            </p>
+                                                                            <p><strong>Ngày sinh:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.birthday|
+                                                                                date:'dd/MM/yyyy'
+                                                                                }}</p>
+                                                                            <p><strong>Tuổi:</strong> {{
+                                                                                editInvoiceForm.patientAge
+                                                                                }} Tuổi</p>
+                                                                            <p><strong>Giới tính:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.gender==
+                                                                                'MALE' ? "Nam" : "Nữ"
+                                                                                }}</p>
+                                                                            <p><strong>CMND/CCCD:</strong> {{
+                                                                                editInvoiceForm.patient.citizenIdentificationNumber
+                                                                                }}</p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Service Details -->
+                                                                            <h4>Dịch vụ</h4>
+                                                                            <p>
+                                                                                <span
+                                                                                    ng-repeat="l in editInvoiceForm.services"><br>
+                                                                                    - {{l.serviceName}} (Giá:
+                                                                                    {{(l.price).toLocaleString('vi',
+                                                                                    { style: 'currency', currency: 'VND'
+                                                                                    })}}, {{l.timeEstimate}} phút)
+                                                                                </span>
+                                                                                <span
+                                                                                    ng-if="editInvoiceForm.services.length <= 0">Cuộc
+                                                                                    hẹn đang xử lí dịch vụ </span>
+                                                                            </p>
+
+                                                                        </div>
+                                                                        <div class="col-lg-12">
+                                                                            <hr style="height: 4px;">
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Appointment Service Details -->
+                                                                            <h4>Thành tiền</h4>
+                                                                            <h4>
+                                                                                <p><strong>Tổng tiền:</strong> {{
+                                                                                    (editInvoiceForm.totalAmount).toLocaleString('vi',
+                                                                                    { style: 'currency', currency: 'VND'
+                                                                                    })
+                                                                                    }}</p>
+                                                                                <p><strong>Thành chữ:</strong>
+                                                                                    {{editInvoiceForm.text}} đồng
+                                                                                </p>
+                                                                            </h4>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Modal footer -->
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-danger"
+                                                                        data-bs-dismiss="modal">Đóng</button>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- modal Thanh toán--------------------------------------------------->
+                                                </table>
+                                            </div>
+                                            <div class="tab-pane" ng-class="{ 'active show': isSelected(-2) }">
+                                                <div class="collapse m-3" id="collapseFilterAppoinment">
+                                                    <div class="card card-body">
+                                                    </div>
+                                                </div>
+                                                <table class="table table-hover datatables"
+                                                    id="dataTable-list-invoice-cancel">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>STT</th>
+                                                            <th>Ngày tạo</th>
+                                                            <th>Họ và tên bệnh nhân</th>
+                                                            <th>Dịch vụ</th>
+                                                            <th>Tổng tiền</th>
+                                                            <th>Trạng thái</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="appointmentWithServices in filteredAppointments">
+                                                            <td>{{
+                                                                $index +1 }}
+                                                            </td>
+                                                            <td>{{
+                                                                appointmentWithServices.appointment.appointmentDate |
+                                                                date:'dd/MM/yyyy'}}
+                                                            </td>
+                                                            <td>{{
+                                                                appointmentWithServices.appointment.patient.fullName }}
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                    ng-repeat="service in appointmentWithServices.services">
+                                                                    {{ service.serviceName
+                                                                    }} - (Giá:{{(service.price).toLocaleString('vi',
+                                                                    { style: 'currency', currency: 'VND' }) }})<span
+                                                                        ng-if="$index < appointmentWithServices.services.length - 1">,<br>
+                                                                        <hr>
+                                                                    </span><span
+                                                                        ng-if="$index === appointmentWithServices.services.length - 1">.</span>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                {{
+                                                                calculateTotalPrice(appointmentWithServices.services).toLocaleString('vi',
+                                                                { style: 'currency', currency: 'VND' }) }}
+                                                            </td>
+                                                            <td>
+                                                                <div
+                                                                    ng-if="appointmentWithServices.services.length > 0">
+                                                                    <span
+                                                                        ng-style="{'color': getStatusColor(appointmentWithServices.status)}">
+                                                                        {{appointmentWithServices.status ? "Đã thanh
+                                                                        toán" : "Chưa thanh toán"}}
+                                                                    </span>
+                                                                </div>
+                                                                <div
+                                                                    ng-if="appointmentWithServices.services.length <= 0">
+                                                                    <span style="color: orange;">Cuộc hẹn đang xử
+                                                                        lí</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    class="btn btn-sm dropdown-toggle more-horizontal"
+                                                                    type="button" data-toggle="dropdown"
+                                                                    aria-haspopup="true" aria-expanded="false">
+                                                                    <span class="text white">...</span>
+                                                                </button>
+                                                                <div class="dropdown-menu dropdown-menu-right"
+                                                                    style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px;">
+                                                                    <a class="dropdown-item text-primary"
+                                                                        ng-click="editInvoice(appointmentWithServices)"
+                                                                        href="#" style="font-size: 18px;"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#myModalDetailSuccess">Xem chi
+                                                                        tiết
+                                                                    </a>
+                                                                    <a class="dropdown-item text-primary"
+                                                                        ng-click="editInvoice(appointmentWithServices)"
+                                                                        href="#" style="font-size: 18px;"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#myModalSuccess"
+                                                                        ng-show="!appointmentWithServices.status && appointmentWithServices.services.length > 0">Tiến
+                                                                        hành thanh
+                                                                        toán</a>
+                                                                    <a class="dropdown-item text-danger"
+                                                                        ng-click="deleteAppoinment(a,$event)" href="#"
+                                                                        style="font-size: 18px;"
+                                                                        ng-show="!appointmentWithServices.status  > 0">Hủy
+                                                                        hóa đơn</a>
+                                                                </div>
+                                                            </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                    <!-- modal Thanh toán --------------------------------------------------->
+                                                    <div class="modal fade" id="myModalSuccess">
+                                                        <div class="modal-dialog  modal-xl">
+                                                            <div class="modal-content">
+
+                                                                <!-- Modal Header -->
+                                                                <div class="modal-header">
+                                                                    <h2 class="modal-title">Thanh toán hóa đơn</h2>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"></button>
+                                                                </div>
+
+                                                                <!-- Modal body -->
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Appointment Details -->
+                                                                            <h4>Cuộc hẹn</h4>
+                                                                            <p><strong>Mã cuộc hẹn:</strong>
+                                                                                {{
+                                                                                editInvoiceForm.appointment.appointmentId
+                                                                                }}</p>
+                                                                            <p><strong>Ngày tạo:</strong> {{
+                                                                                editInvoiceForm.appointment.createAt |
+                                                                                date:'dd/MM/yyyy'}}
+                                                                            </p>
+                                                                            <p><strong>Ghi chú:</strong> {{
+                                                                                editInvoiceForm.appointment.note }}
+                                                                            </p>
+                                                                            <p><strong>Loại dịch vụ:</strong> {{
+                                                                                editInvoiceForm.appointment.appointmentType.typeName
+                                                                                }}
+                                                                            </p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Patient Record -->
+                                                                            <h4>Hồ sơ bệnh án</h4>
+                                                                            <p><strong>Ngày tạo hồ sơ bệnh án:</strong>
+                                                                                {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.createAt
+                                                                                |
+                                                                                date:'dd/MM/yyyy'}}</p>
+                                                                            <p><strong>Tình trạng hiện tại: </strong> {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.currentCodition
+                                                                                }}</p>
+                                                                            <p><strong>Tái khám:</strong> {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.reExamination
+                                                                                }}</p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Patient Details -->
+                                                                            <h4>Bệnh nhân</h4>
+                                                                            <p><strong>Họ và tên:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.fullName
+                                                                                }}</p>
+                                                                            <p><strong>Số điện thoại:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.phoneNumber
+                                                                                }}
+                                                                            </p>
+                                                                            <p><strong>Ngày sinh:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.birthday|
+                                                                                date:'dd/MM/yyyy'
+                                                                                }}</p>
+                                                                            <p><strong>Tuổi:</strong> {{
+                                                                                editInvoiceForm.patientAge
+                                                                                }} Tuổi</p>
+                                                                            <p><strong>Giới tính:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.gender==
+                                                                                'MALE' ? "Nam" : "Nữ"
+                                                                                }}</p>
+                                                                            <p><strong>CMND/CCCD:</strong> {{
+                                                                                editInvoiceForm.patient.citizenIdentificationNumber
+                                                                                }}</p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Service Details -->
+                                                                            <h4>Dịch vụ</h4>
+                                                                            <p>
+                                                                                <span
+                                                                                    ng-repeat="l in editInvoiceForm.services"><br>
+                                                                                    - {{l.serviceName}} (Giá:
+                                                                                    {{(l.price).toLocaleString('vi',
+                                                                                    { style: 'currency', currency: 'VND'
+                                                                                    })}}, {{l.timeEstimate}} phút)
+                                                                                </span>
+                                                                            </p>
+
+                                                                        </div>
+                                                                        <div class="col-lg-12">
+                                                                            <hr style="height: 4px;">
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Appointment Service Details -->
+                                                                            <h4>Thành tiền</h4>
+                                                                            <h4>
+                                                                                <p><strong>Tổng tiền:</strong> {{
+                                                                                    (editInvoiceForm.totalAmount).toLocaleString('vi',
+                                                                                    { style: 'currency', currency: 'VND'
+                                                                                    })
+                                                                                    }}</p>
+                                                                                <p><strong>Thành chữ:</strong>
+                                                                                    {{editInvoiceForm.text}} đồng
+                                                                                </p>
+                                                                            </h4>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+
+                                                                <!-- Modal footer -->
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-primary"
+                                                                        ng-click="payments()">Thanh
+                                                                        toán</button>
+                                                                    <button type="button" class="btn btn-danger"
+                                                                        data-bs-dismiss="modal">Đóng</button>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- modal Thanh toán--------------------------------------------------->
+                                                    <!-- modal detail --------------------------------------------------->
+                                                    <div class="modal fade" id="myModalDetailSuccess">
+                                                        <div class="modal-dialog  modal-xl">
+                                                            <div class="modal-content">
+
+                                                                <!-- Modal Header -->
+                                                                <div class="modal-header">
+                                                                    <h2 class="modal-title">Chi tiết hóa đơn</h2>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"></button>
+                                                                </div>
+
+                                                                <!-- Modal body -->
+                                                                <div class="modal-body">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Appointment Details -->
+                                                                            <h4>Cuộc hẹn</h4>
+                                                                            <p><strong>Mã cuộc hẹn:</strong>
+                                                                                {{
+                                                                                editInvoiceForm.appointment.appointmentId
+                                                                                }}</p>
+                                                                            <p><strong>Ngày tạo:</strong> {{
+                                                                                editInvoiceForm.appointment.createAt |
+                                                                                date:'dd/MM/yyyy'}}
+                                                                            </p>
+                                                                            <p><strong>Ghi chú:</strong> {{
+                                                                                editInvoiceForm.appointment.note }}
+                                                                            </p>
+                                                                            <p><strong>Loại dịch vụ:</strong> {{
+                                                                                editInvoiceForm.appointment.appointmentType.typeName
+                                                                                }}
+                                                                            </p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Patient Record -->
+                                                                            <h4>Hồ sơ bệnh án</h4>
+                                                                            <p><strong>Ngày tạo hồ sơ bệnh án:</strong>
+                                                                                {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.createAt
+                                                                                |
+                                                                                date:'dd/MM/yyyy'}}</p>
+                                                                            <p><strong>Tình trạng hiện tại: </strong> {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.currentCodition
+                                                                                }}</p>
+                                                                            <p><strong>Tái khám:</strong> {{
+                                                                                editInvoiceForm.appointment.appointmentPatientRecord.reExamination
+                                                                                }}</p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Patient Details -->
+                                                                            <h4>Bệnh nhân</h4>
+                                                                            <p><strong>Họ và tên:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.fullName
+                                                                                }}</p>
+                                                                            <p><strong>Số điện thoại:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.phoneNumber
+                                                                                }}
+                                                                            </p>
+                                                                            <p><strong>Ngày sinh:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.birthday|
+                                                                                date:'dd/MM/yyyy'
+                                                                                }}</p>
+                                                                            <p><strong>Tuổi:</strong> {{
+                                                                                editInvoiceForm.patientAge
+                                                                                }} Tuổi</p>
+                                                                            <p><strong>Giới tính:</strong> {{
+                                                                                editInvoiceForm.appointment.patient.gender==
+                                                                                'MALE' ? "Nam" : "Nữ"
+                                                                                }}</p>
+                                                                            <p><strong>CMND/CCCD:</strong> {{
+                                                                                editInvoiceForm.patient.citizenIdentificationNumber
+                                                                                }}</p>
+                                                                        </div>
+
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Service Details -->
+                                                                            <h4>Dịch vụ</h4>
+                                                                            <p>
+                                                                                <span
+                                                                                    ng-repeat="l in editInvoiceForm.services"><br>
+                                                                                    - {{l.serviceName}} (Giá:
+                                                                                    {{(l.price).toLocaleString('vi',
+                                                                                    { style: 'currency', currency: 'VND'
+                                                                                    })}}, {{l.timeEstimate}} phút)
+                                                                                </span>
+                                                                            </p>
+
+                                                                        </div>
+                                                                        <div class="col-lg-12">
+                                                                            <hr style="height: 4px;">
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <!-- Display Appointment Service Details -->
+                                                                            <h4>Thành tiền</h4>
+                                                                            <h4>
+                                                                                <p><strong>Tổng tiền:</strong> {{
+                                                                                    (editInvoiceForm.totalAmount).toLocaleString('vi',
+                                                                                    { style: 'currency', currency: 'VND'
+                                                                                    })
+                                                                                    }}</p>
+                                                                                <p><strong>Thành chữ:</strong>
+                                                                                    {{editInvoiceForm.text}} đồng
+                                                                                </p>
+                                                                            </h4>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+
+                                                                <!-- Modal footer -->
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-danger"
+                                                                        data-bs-dismiss="modal">Đóng</button>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- modal Thanh toán--------------------------------------------------->
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- simple table -->
+                    </div> <!-- end section -->
+                </div> <!-- .col-12 -->
+            </div> <!-- .row -->
+    </div> <!-- .container-fluid -->
+
+    <!-- Event details -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventDetailsListAppoinment"
+        id="btnEventDetailsListAppoinment" hidden>
+        Xem chi tiết cuộc hẹn
+    </button>
+    <div class="modal fade" id="eventDetailsListAppoinment" tabindex="-1"
+        aria-labelledby="eventDetailsListAppoinmentLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventDetailsListAppoinmentLabel">Chi tiết cuộc hẹn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="eventDetailsListAppoinmentBody">
+                    <!-- Thông tin sự kiện -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">Sửa cuộc hẹn</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Event details -->
+
+
+    <div class="modal fade modal-notif modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="defaultModalLabel">Notifications</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group list-group-flush my-n3">
+                        <div class="list-group-item bg-transparent">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="fe fe-box fe-24"></span>
+                                </div>
+                                <div class="col">
+                                    <small><strong>Package has uploaded successfull</strong></small>
+                                    <div class="my-0 text-muted small">Package is zipped and uploaded</div>
+                                    <small class="badge badge-pill badge-light text-muted">1m ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item bg-transparent">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="fe fe-download fe-24"></span>
+                                </div>
+                                <div class="col">
+                                    <small><strong>Widgets are updated successfull</strong></small>
+                                    <div class="my-0 text-muted small">Just create new layout Index, form, table
+                                    </div>
+                                    <small class="badge badge-pill badge-light text-muted">2m ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item bg-transparent">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="fe fe-inbox fe-24"></span>
+                                </div>
+                                <div class="col">
+                                    <small><strong>Notifications have been sent</strong></small>
+                                    <div class="my-0 text-muted small">Fusce dapibus, tellus ac cursus commodo
+                                    </div>
+                                    <small class="badge badge-pill badge-light text-muted">30m ago</small>
+                                </div>
+                            </div> <!-- / .row -->
+                        </div>
+                        <div class="list-group-item bg-transparent">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <span class="fe fe-link fe-24"></span>
+                                </div>
+                                <div class="col">
+                                    <small><strong>Link was attached to menu</strong></small>
+                                    <div class="my-0 text-muted small">New layout has been attached to the menu
+                                    </div>
+                                    <small class="badge badge-pill badge-light text-muted">1h ago</small>
+                                </div>
+                            </div>
+                        </div> <!-- / .row -->
+                    </div> <!-- / .list-group -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Clear
+                        All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade modal-shortcut modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="defaultModalLabel">Shortcuts</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body px-5">
+                    <div class="row align-items-center">
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-success justify-content-center">
+                                <i class="fe fe-cpu fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Control area</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-activity fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Activity</p>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-droplet fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Droplet</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-upload-cloud fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Upload</p>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-users fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Users</p>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="squircle bg-primary justify-content-center">
+                                <i class="fe fe-settings fe-32 align-self-center text-white"></i>
+                            </div>
+                            <p>Settings</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </main>
+</div>
+</div>
+
+<!-- <div class="tab-pane" ng-class="{ 'active show': isSelected(d.doctorId) }" ng-repeat="d in listDoctorDB"
+    id="doctor-{{d.doctorId}}">
+    <div class="row my-4">
+        <div class="col-md-12">
+            <div id='calendar-doctor-{{d.doctorId}}'></div>
+        </div>
+    </div>
+</div> -->

@@ -1,0 +1,366 @@
+<div class="row justify-content-center mb-3">
+  <div class="information mb-3">
+    <p class="text-secondary">
+      <span class="badge bg-success" ng-show="isDisabledStatus('')"> Đã hoàn thành</span>
+      <span ng-show="!isDisabledStatus('')">Cập nhật </span>cuộc hẹn ngày
+      <span class="text-primary">{{originalDate}}. </span>
+      Bệnh nhân <span class="text-primary">{{originalPatient.fullName}}. </span>
+      Thời gian từ <span class="text-primary">{{formDoctorUp.startTime|timeFormat}}</span> đến <span
+        class="text-primary">{{formDoctorUp.endTime|timeFormat}}</span>
+    </p>
+  </div>
+
+  <div class="row">
+    <div class="multisteps-form">
+      <div class="row">
+        <div class="col-12 col-lg-8 ml-auto mr-auto mb-4">
+          <div class="multisteps-form__progress">
+            <button class="multisteps-form__progress-btn js-active" id="btn-js-active" type="button">1. Cập nhật dịch
+              vụ</button>
+            <button class="multisteps-form__progress-btn" type="button" disabled>2. Tạo đơn thuốc</button>
+          </div>
+        </div>
+      </div>
+      <div class="multisteps-form__form overflow-scroll">
+        <div class="multisteps-form__panel shadow p-4 rounded bg-white js-active" data-animation="scaleIn">
+          <div class="multisteps-form__content">
+            <div class="row form-booking-appointment p-3">
+              <div class="row mb-3" ng-class="{'disabled-div': isDisabledStatus('')}">
+                <div class="col form-booking-appointment-col-one">
+                  <div class="form-group mb-3" hidden>
+                    <label for="appointmentStatusDoctorUp">Trạng thái</label>
+                    <select id="appointmentStatusDoctorUp" class="form-control select2"
+                      ng-model="formDoctorUp.appointmentStatus"
+                      ng-options="t.appointment_StatusId as t.status for t in listAppointmentStatusBD"
+                      ng-disabled="isDisabledStatus('hoàn thành')">
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <div class="custom-control custom-switch mb-3">
+                      <input type="checkbox" class="custom-control-input" id="IsReExamination"
+                        ng-model="formDoctorUp.isReExamination" ng-checked="formDoctorUp.isReExamination"
+                        ng-disabled="isDisabledStatus('')">
+                      <label class="custom-control-label" for="IsReExamination">Tái khám</label>
+                    </div>
+                    <div class="mb-3" ng-show="formDoctorUp.isReExamination">
+                      <div class="row mb-3">
+                        <div class="col-3" ng-repeat="dateNum in initReExaminationDate">
+                          <div class="custom-checkbox checbox-checked me-3">
+                            <label>
+                              <input type="radio" name="initReExaminationDate" id="repeatRadioTOS-{{$index}}"
+                                ng-click="onChangeReExaminationDate(dateNum.value)" ng-model="dateRequestReExamination"
+                                ng-value="dateNum.value">
+                              <span>{{dateNum.value}} ngày</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group mb-3">
+                        <label for="date-input1">Ngày tái khám khám</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <div class="input-group-text" id="button-addon-date"><span
+                                class="fe fe-calendar fe-16"></span>
+                            </div>
+                          </div>
+                          <input type="text" class="form-control drgpicker-reExam" id="reExaminationDate"
+                            ng-model="formDoctorUp.reExaminationDate" autocomplete="off">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div ng-class="{'disabled-div': isDisabledStatus('')}">
+                    <div class="form-group mb-3">
+                      <label for="dental-issues-doctorUp">Nhập triệu chứng</label>
+                      <select id="dental-issues-doctorUp" class="form-control select2-multi-up"
+                        ng-model="formDoctorUp.dentalIssuesId"
+                        ng-options="ds.dentalIssuesId as ds.name for ds in listDentalIssueDBUp">
+                      </select>
+                    </div>
+
+                    <div class="form-group mb-3" ng-show="isShowTreatment()">
+                      <label for="treatment-doctorUp">Điều trị</label>
+                      <select id="treatment-doctorUp" class="form-control select2-multi-up"
+                        ng-model="formDoctorUp.treatmentId"
+                        ng-options="t.treatmentId as t.treatmentName for t in listTreatmentByDentalIssuesDB">
+                      </select>
+                    </div>
+
+                    <div ng-show="isShowService()" style="height: 450px;" class="mb-3">
+                      <table class="table table-hover datatables" id="dataTable-list-service-doctor-update"
+                        style="cursor: pointer;">
+                        <thead>
+                          <tr>
+                            <th>
+                              #
+                            </th>
+                            <th>ID</th>
+                            <th>Tên dịch vụ</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Thời lượng</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="s in listServiceFromDB" ng-click="toggleCheckbox($event, s,true)">
+                            <td>
+                              <input type="checkbox" ng-model="s.checked" ng-change="updateSelectedServices(s,true)"
+                                ng-click="$event.stopPropagation()">
+                            </td>
+                            <td>{{s.serviceId}}</td>
+                            <td>{{s.serviceName}}</td>
+                            <td>{{s.price|formatPrice}}</td>
+                            <td>
+                              <input type="number" min="1" ng-model="s.quantity"
+                                style="width: 45px; text-align: center;" id="{{s.serviceId}}"
+                                ng-click="$event.stopPropagation()">
+                            </td>
+                            <td>{{s.timeEstimate}} phút</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div ng-show="isContinueShow()" class="card d-inline-flex mb-3 w-100"
+                      style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px;">
+                      <div class="card-body bg-light text-warning p-3">
+                        <p>Dịch vụ đã chọn: </p>
+                        <table class="table table-borderless table-striped">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Tên dịch vụ</th>
+                              <th scope="col" class="text-right">Đơn giá</th>
+                              <th scope="col" class="text-right">Số lượng</th>
+                              <th scope="col" class="text-right">Thành tiền</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr ng-repeat="s in selectedServicesUp">
+                              <th scope="row">{{s.serviceId}}</th>
+                              <td>{{s.serviceName}}</td>
+                              <td class="text-right">{{s.price | formatPrice}}</td>
+                              <td class="text-right">{{s.quantity}}</td>
+                              <td class="text-right">{{s.price*s.quantity | formatPrice}}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div class="row mt-5">
+                          <div class="col-2 text-center">
+                          </div>
+                          <div class="col-md-5">
+                            <p hidden>temp</p>
+                          </div>
+                          <div class="col-md-5">
+                            <div class="text-right mr-2">
+
+                              <p class="mb-2 h6">
+                                <span class="text-secondary">Tổng thanh toán : </span>
+                                <span>{{getTotalPrice()|formatPrice}}</span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="button-row d-flex mt-4">
+            <button class="btn btn-outline-primary ml-auto js-btn-next" type="button" title="Next"
+              ng-show="isContinueShow()">Tiếp tục</button>
+          </div>
+        </div>
+
+        <div class="multisteps-form__panel shadow p-4 rounded bg-white js-active" data-animation="scaleIn">
+          <div class="multisteps-form__content">
+            <div class="row justify-content-center">
+              <div class="col-12 col-lg-10 col-xl-8">
+                <div id="pdfContentMedicine">
+                  <div class="row mb-3">
+                    <div class="col-md-7">
+                      <p class="small text-uppercase mb-2">Phòng Khám Nha Khoa</p>
+                      <p class="mb-4">
+                        <strong>Tooth Teeth</strong><br /> Địa chỉ: 51/A, 3/2, Ninh Kiều, Cần
+                        Thơ<br /> (84) 0969 281 254<br />
+                      </p>
+                    </div>
+                    <div class="col-5 text-center mb-4">
+                      <img src="/assets/images/logo2.jpg" class="navbar-brand-img brand-sm mx-auto mb-4" alt="...">
+                      <h3 class="mb-0 text-uppercase">Đơn thuốc
+                      </h3>
+                      <p>Ngày: {{originalDate}} <br /></p>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+
+                    <div class="col-12">
+                      <p class="small text-uppercase mb-2">Khách hàng</p>
+                      <div class="row">
+                        <div class="col-6">
+                          <strong>{{originalPatient.fullName}}</strong>
+                        </div>
+                        <div class="col-6">
+                          <p class="small text-uppercase mb-2">Ngày sinh: {{originalPatient.birthday|dateFormat}} </p>
+                        </div>
+                        <div class="col-6" ng-switch="originalPatient.gender">
+                          <p class="small text-uppercase mb-2" ng-switch-when="FEMALE">Giới tính: Nữ</p>
+                          <p class="small text-uppercase mb-2" ng-switch-when="MALE">Giới tính: Nam</p>
+                          <p class="small text-uppercase mb-2" ng-switch-default>Giới tính: Khác</p>
+                        </div>
+                        <div class="col-6">
+                          <p class="small text-uppercase mb-2">Địa chỉ: {{originalPatient.citizenIdentificationNumber}}
+                          </p>
+                        </div>
+                        <div class="col-6">
+                          <p class="small text-uppercase mb-2">Số điện thoại:
+                            {{originalPatient.phoneNumber|phoneNumberFormat}}</p>
+                        </div>
+                        <div class="col-6">
+                          <p class="small text-uppercase mb-2">Mã hồ sơ: <strong>#{{aprId}}</strong> </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <p>Chẩn đoán: {{formDoctorUp.currentCondition}}</p>
+                    </div>
+                  </div>
+                  <div class="row mb-5">
+                    <div class="col-12 text-center mb-4">
+                      <h3 class="mb-0 text-uppercase">Chỉ Định Dùng
+                        Thuốc</h3>
+                    </div>
+                    <div class="col-12 mb-3" id="data-medince">
+                      <div class="form-row">
+                        <p>Đơn thuốc được sử dụng trong: </p>
+                        <div class="form-group col-md-3">
+                          <select id="treatmentDurationId" class="form-control select2"
+                            ng-model="selectedTreatmentDuration"
+                            ng-options="t.treatmentDurationId as (t.quantity +' ngày') for t in treatmentDurationDB">
+                          </select>
+                        </div>
+                      </div>
+                      <table ng-show="selectedTreatmentDuration.length!=0" class="table table-hover datatables"
+                        id="dataTable-list-medicine-doctor-update">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th>#</th>
+                            <th>Tên thuốc</th>
+                            <th class="text-right">Số lượng</th>
+                            <th class="text-right">Đơn vị</th>
+                            <th>Buổi uống</th>
+                            <th>Lời khuyên</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="m in listMedicineDB" ng-click="toggleCheckboxMedicine($event,m)"
+                            style="cursor: pointer;">
+                            <td>
+                              <input type="checkbox" ng-model="m.checked" ng-change="updateSelectedMedicine(m)"
+                                ng-click="$event.stopPropagation()" style="cursor: pointer;">
+                            </td>
+                            <th>{{m.medicinesId}}</th>
+                            <td>{{m.medicineName}}</td>
+
+                            <td>{{m.medicinesDosageAmount.amount}}</td>
+                            <!-- <td class="text-right">
+                              <input type="number" min="1" ng-model="m.quantity"
+                                style="width: 45px; text-align: center;" id="{{m.medicinesId}}"
+                                ng-click="$event.stopPropagation()">
+                            </td> -->
+
+                            <td class="text-right">{{m.medicinesDosageUnit.unit}}
+                            </td>
+                            <td class="d-flex flex-row m-0" style="box-shadow: 0px 0px 5px rgba(5, 64, 227, 0.5); border-radius: 5px;" ng-click="$event.stopPropagation()">
+                              <div ng-repeat="f in listFrequencyDB" class="me-3">
+                                <label>
+                                  <input type="checkbox" ng-click="toggleFrequency($event,m, f)"
+                                    id="frequency-{{m.medicinesId}}-{{f.frequencyId}}"
+                                    ng-checked="isFrequencyChecked(m, f)" style="cursor: pointer;">
+                                  <span>{{f.timesOfDay}}</span>
+                                </label>
+                              </div>
+                            </td>
+                            <td>{{m.beforeEating ? 'Uống trước khi ăn' : 'Uống sau khi ăn'}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="custom-hr mb-3"></div>
+                    </div>
+                    <div class="col-12 medincine-result mb-3" ng-show="selectedMedicines.length!=0">
+                      <h6 id="medicine-note-title">Thuốc đã chọn: </h6>
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>STT</th>
+                            <th>Tên thuốc</th>
+                            <th class="text-right">Số lượng</th>
+                            <th class="text-right">Đơn vị</th>
+                            <th>Buổi uống</th>
+                            <th>Lời khuyên</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="m in selectedMedicines">
+                            <th>{{$index+1}}</th>
+                            <td>{{m.medicineName}}</td>
+                            <td class="text-right">{{m.quantity*treatmentDurationQuantity}}</td>
+                            <td class="text-right">{{m.medicinesDosageUnit.unit}}
+                            </td>
+                            <td>{{m.frequencyString}}</td>
+                            <td>{{m.beforeEating ? 'Uống trước khi ăn' : 'Uống sau khi ăn'}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row mb-5">
+                    <div class="col-md-7">
+                      <p>Cộng khoản: <strong>{{selectedMedicines.length}}</strong></p>
+                      <p>Số ngày uống: <strong>{{treatmentDurationQuantity}}</strong></p>
+                      <p>
+                        <strong><em>Tái khám xin mang theo đơn này</em></strong>
+                      </p>
+                    </div>
+                    <div class="col-md-5">
+                      <div class="text-right">
+                        <div class="mb-5 h6 text-center">
+                          <p class="text-secondary">Ngày {{ day }} tháng {{ month }} năm {{ year }} </p>
+                          <p>Bác sĩ khám bệnh</p>
+                        </div>
+                        <div class="mt-3 text-center">
+                          <img ng-src="{{urlImgDoctorSignatureDisplay(formDoctorUp.signature)}}" class="img-thumbnail" alt="..." width="70" height="70">
+                          <p>{{formDoctorUp.fullName}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="button-row d-flex flex-row-reverse mt-4">         
+            <button class="btn btn-outline-success" type="button" title="Send" ng-click="doctorUpdateAppointment()"
+              ng-disabled="selectedMedicines.length==0">Cập
+              nhật</button>
+            <!-- <button type="button" class="btn btn-outline-primary"
+              ng-click="exportPDF('pdfContentMedicine','medicine')">In
+              Đơn thuốc</button> -->
+            <button class="btn btn-outline-secondary js-btn-prev" type="button" title="Prev">Trở về</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

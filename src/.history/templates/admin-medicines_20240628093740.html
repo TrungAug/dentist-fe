@@ -1,0 +1,195 @@
+<div class="vertical dark">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'"></nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar></aside>
+        <main role="main" class="main-content" ng-controller="AdminMedicineController">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <h2 class="mb-2 p-0 page-title">Quản lý thuốc</h2>
+                        <p class="card-text"></p>
+                        <div class="row my-4">
+                            <div class="col-md-12">
+                                <div class="card shadow">
+                                    <div class="card-body">
+                                        <ul class="nav nav-pills mb-3" id="manageMedicines" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="form-tab-medicine"
+                                                    data-bs-toggle="tab"
+                                                    data-bs-target="#form-tab-pane-manage-medicines" type="button"
+                                                    role="tab" aria-controls="form-tab-pane-manage-medicines"
+                                                    aria-selected="true">
+                                                    <i class="bi bi-pencil-square"></i> Quản lý
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="list-tab-medicine" data-bs-toggle="tab"
+                                                    data-bs-target="#list-tab-pane-medicine" role="tab"
+                                                    aria-controls="list-tab-pane-medicine" aria-selected="false">
+                                                    <i class="bi bi-list-check"></i> Danh sách
+                                                </button>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" id="manageMedicinesTabContent">
+                                            <div class="tab-pane fade show active" id="form-tab-pane-manage-medicines"
+                                                role="tabpanel" aria-labelledby="form-tab-medicine" tabindex="0">
+                                                <div class="row align-items-center justify-content-center">
+                                                    <div class="col-lg col-sm-12 p-3 me-3 d-flex flex-column flex-wrap">
+                                                        <div class="row">
+                                                            <div class="col-lg-6 col-md-12">
+                                                                <div class="form-outline mb-3">
+                                                                    <label class="form-label"
+                                                                        for="manageMedicinesModalmedicineName">Tên
+                                                                        thuốc</label>
+                                                                    <input type="text"
+                                                                        id="manageMedicinesModalmedicineName"
+                                                                        ng-model="formMedicine.medicineName"
+                                                                        class="form-control" placeholder="Tên thuốc"
+                                                                        required />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6 col-md-12">
+                                                                <div class="form-outline mb-3">
+                                                                    <label class="form-label"
+                                                                        for="manageMedicinesModalmedicineCategory">Loại
+                                                                        thuốc</label>
+                                                                    <select id="manageMedicinesModalmedicineCategory"
+                                                                        class="form-control select2"
+                                                                        ng-model="formMedicine.medicineCategoryId"
+                                                                        ng-options="c.medicineCategoryId as c.name for c in listMedicineCategoryDB"></select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6 col-md-12">
+                                                                <div class="form-outline mb-3">
+                                                                    <label class="form-label"
+                                                                        for="manageMedicinesModaldistributionName">Nhà
+                                                                        phân phối</label>
+                                                                    <select id="manageMedicinesModaldistributionName"
+                                                                        class="form-control select2"
+                                                                        ng-model="formMedicine.distributionMedicinesId"
+                                                                        ng-options="d.distributionMedicinesId as d.distributionName for d in listDistributionMedicinesDB"></select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6 col-md-12">
+                                                                <div class="form-outline mb-3">
+                                                                    <label class="form-label"
+                                                                        for="manageMedicinesModalmedicinesDosageAmount">Liều
+                                                                        lượng</label>
+                                                                    <select
+                                                                        id="manageMedicinesModalmedicinesDosageAmount"
+                                                                        class="form-control select2"
+                                                                        ng-model="formMedicine.medicinesDosageAmountId"
+                                                                        ng-options="d.medicinesDosageAmountId as d.amount for d in listMedicinesDosageAmountDB"></select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6 col-md-12">
+                                                                <div class="form-outline mb-3">
+                                                                    <label class="form-label"
+                                                                        for="manageMedicinesModalmedicinesDosageUnit">Đơn
+                                                                        vị liều lượng</label>
+                                                                    <select id="manageMedicinesModalmedicinesDosageUnit"
+                                                                        class="form-control select2"
+                                                                        ng-model="formMedicine.medicinesDosageUnitId"
+                                                                        ng-options="u.medicinesDosageUnitId as u.unit for u in listMedicinesDosageUnitDB"></select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6 col-md-12">
+                                                                <div class="form-outline mb-3">
+                                                                    <label class="form-label"
+                                                                        for="manageMedicinesModalbeforeEating"
+                                                                        style="display: block">
+                                                                        Trước khi ăn
+                                                                    </label>
+                                                                    <input type="checkbox"
+                                                                        id="manageMedicinesModalbeforeEating"
+                                                                        ng-model="formMedicine.beforeEating"
+                                                                        class="form-check-input" style="
+                                                                        display: block;
+                                                                        margin-top: 5px;
+                                                                        margin-left: 5px;
+                                                                        " />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex justify-content-center mt-3">
+                                                            <button ng-click="createMedicine()"
+                                                                class="btn btn-success m-2">
+                                                                Tạo mới
+                                                            </button>
+                                                            <button ng-click="updateMedicine()"
+                                                                class="btn btn-primary m-2">
+                                                                Cập nhật
+                                                            </button>
+                                                            <button ng-click="resetForm()" class="btn btn-info m-2">
+                                                                Làm mới
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="list-tab-pane-medicine" role="tabpanel"
+                                                aria-labelledby="list-tab-medicine" tabindex="0">
+                                                <div class="card">
+                                                    <table class="table datatables" id="dataTable-list-medicine">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Tên thuốc</th>
+                                                                <th>Loại thuốc</th>
+                                                                <th>Nhà phân phối</th>
+                                                                <th>Liều lượng</th>
+                                                                <th>Đơn vị</th>
+                                                                <th>Trước khi ăn</th>
+                                                                <th>Thao tác</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="m in listMedicineDB">
+                                                                <td>{{m.medicineName}}</td>
+                                                                <td>{{m.medicineCategory.name}}</td>
+                                                                <td>{{m.distributionMedicines.name}}</td>
+                                                                <td>{{m.medicinesDosageAmount.amount}}</td>
+                                                                <td>{{m.medicinesDosageUnit.unit}}</td>
+                                                                <td>{{m.beforeEating ? 'Có' : 'Không'}}</td>
+                                                                <td>
+                                                                    <button
+                                                                        class="btn btn-sm dropdown-toggle more-horizontal"
+                                                                        type="button" data-toggle="dropdown"
+                                                                        aria-haspopup="true" aria-expanded="false">
+                                                                        <span class="text white">...</span>
+                                                                    </button>
+                                                                    <div class="dropdown-menu dropdown-menu-right"
+                                                                        style="
+                                                                        box-shadow: 0px 0px 10px
+                                                                            rgba(0, 0, 0, 0.5);
+                                                                        border-radius: 10px;
+                                                                        ">
+                                                                        <a class="dropdown-item text-primary"
+                                                                            ng-click="editMedicine(m, $event)" href="#"
+                                                                            style="font-size: 18px">Sửa</a>
+                                                                        <a class="dropdown-item text-danger"
+                                                                            ng-click="deleteMedicine(m, $event)"
+                                                                            href="#" style="font-size: 18px">Xóa</a>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- simple table -->
+                        </div>
+                        <!-- end section -->
+                    </div>
+                    <!-- .col-12 -->
+                </div>
+                <!-- .row -->
+            </div>
+            <!-- .container-fluid -->
+        </main>
+    </div>
+</div>

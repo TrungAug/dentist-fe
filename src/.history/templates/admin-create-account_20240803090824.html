@@ -1,0 +1,89 @@
+<div class="vertical  dark ">
+    <div class="wrapper">
+        <nav class="topnav navbar navbar-light" ng-include="'component/admin-nav.html'">
+        </nav>
+        <aside class="sidebar-left border-right shadow" id="leftSidebar" ng-include="'component/admin-aside.html'"
+            data-simplebar>
+        </aside>
+        <main role="main" class="main-content" ng-controller="AdminCreateAccountController">
+            <div class="container-fluid">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                    </ol>
+                </nav>
+                <div class="row mb-3">
+                    <label for="">Chọn đối tượng</label>
+                    <div class="col-4" ng-repeat="data in listRoleDB">
+                        <div class="custom-checkbox checbox-checked">
+                            <label>
+                                <input ng-click="getRoleOption(data)" type="radio"
+                                    id="dataOption-{{data.roleId}}-{{data.roleName}}" name="role">
+                                <span> {{data.description.toUpperCase()}} </span>
+                            </label>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center p-3" ng-show="selectedOption!=''"
+                    style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 5px;">
+
+                    <div class="row mb-3">
+                        <div class="col-6" ng-if="selectedOption=='BENH_NHAN'">
+                            <label for="selectedOptionBENH_NHAN">Chọn người dùng</label>
+                            <select id="selectedOptionBENH_NHAN" class="form-control select2"
+                                ng-model="accForm.patientId" ng-options="o.patientId as (o.patientId - o.fullName) for o in dataObject">
+                            </select>
+                        </div>
+                        <div class="col-6" ng-if="selectedOption=='BAC_SI'">
+                            <label for="selectedOptionBAC_SI">Chọn người dùng</label>
+                            <select id="selectedOptionBAC_SI" class="form-control select2" ng-model="accForm.doctorId"
+                                ng-options="o.doctorId as (o.doctorId - o.fullName) for o in dataObject">
+                            </select>
+                        </div>
+                        <div class="col-6" ng-if="selectedOption=='NHAN_VIEN'">
+                            <label for="selectedOptionNHAN_VIEN">Chọn người dùng</label>
+                            <select id="selectedOptionNHAN_VIEN" class="form-control select2"
+                                ng-model="accForm.dentalStaffId"
+                                ng-options="o.dentalStaffId as (o.dentalStaffId - o.fullname) for o in dataObject">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row text-center" ng-show="isExistUser=='true'">
+                        <p class="text-warning">Người dùng đã có tài khoản</p>
+                    </div>
+                    <div class="row" ng-show="isExistUser=='false'">
+                        <div class="col-6 form-group mb-3">
+                            <label for="user-email">Email <span class="text-danger">(*)</span></label>
+                            <input type="email" id="user-email" name="user-email" class="form-control"
+                                placeholder="Email" ng-model="accForm.email"
+                                ng-class="{'input-error': isInvalidInput, 'input-success': isValidInput}"
+                                ng-focus="validateOnFocus()" ng-blur="validateOnBlur()" required>
+                            <p class="text-end text-warning" ng-show="isExistEmail=='true'">
+                                <i class="fe fe-alert-triangle fe-16"></i>
+                                <span>Đã tồn tại email</span>
+                            </p>
+                        </div>
+                        <div class="col-6 form-group mb-3">
+                            <label for="user-password">Mật khẩu <span class="text-danger">(*)</span></label>
+                            <input type="password" id="user-password" class="form-control mb-3"
+                                ng-model="accForm.password" disabled required>
+                            <p class="text-end text-primary">
+                                <i class="fe fe-loader fe-16"></i>
+                                <a href="#" ng-click="generatePassword($event)">Tạo mật khẩu tự động</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row text-end">
+                        <div class="col-12">
+                            <button class="btn btn-primary" ng-click="createAccount()" ng-show="isExistEmail=='false'&&accForm.password!=''">Tạo tài khoản</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>

@@ -1,6 +1,7 @@
-app.controller('AdminListInvoice', function ($scope, $http, $rootScope, $location, $timeout, TimezoneService, $route,API) {
+app.controller('AdminListInvoice', function ($scope, $http, $rootScope, $location, $timeout, TimezoneService, $route,API,adminBreadcrumbService) {
     let url = API.getBaseUrl();
     let headers = API.getHeaders();
+    adminBreadcrumbService.generateBreadcrumb()
     //code here
 
     var defaultTimezone = "Asia/Ho_Chi_Minh"
@@ -286,6 +287,41 @@ app.controller('AdminListInvoice', function ($scope, $http, $rootScope, $locatio
             console.log("Error", err);
         })
     }
+    $scope.getListBillCancel = () => {
+        $scope.clearDateFilter();
+        $http.get(url + '/appointment-invoice-cancel').then(respone => {
+            $scope.appointments_cancel = respone.data
+            console.log("$scope.appointmentservice", $scope.appointments);
+            $(document).ready(function () {
+                $('#dataTable-list-invoice-cancel1').DataTable({
+                    autoWidth: true,
+                    "lengthMenu": [
+                        [10, 20, 30, -1],
+                        [10, 20, 30, "All"]
+                    ],
+                    language: {
+                        sProcessing: "Đang xử lý...",
+                        sLengthMenu: "Hiển thị _MENU_ mục",
+                        sZeroRecords: "Không tìm thấy dòng nào phù hợp",
+                        sInfo: "Đang hiển thị _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                        sInfoEmpty: "Đang hiển thị 0 đến 0 trong tổng số 0 mục",
+                        sInfoFiltered: "(được lọc từ _MAX_ mục)",
+                        sInfoPostFix: "",
+                        sSearch: "Tìm kiếm:",
+                        sUrl: "",
+                        oPaginate: {
+                            sFirst: "Đầu",
+                            sPrevious: "Trước",
+                            sNext: "Tiếp",
+                            sLast: "Cuối"
+                        }
+                    }
+                });
+            });
+        }).catch(err => {
+            console.log("Error", err);
+        })
+    }
     $scope.getListAppointmentServiceClear = () => {
         $scope.clearDateFilter();
         $http.get(url + '/appointment-invoice').then(respone => {
@@ -451,7 +487,7 @@ app.controller('AdminListInvoice', function ($scope, $http, $rootScope, $locatio
 
     $scope.setupTab()
     $scope.getListAppointmentService();
-
+    $scope.getListBillCancel();
     $scope.getListAppointmentStatus()
     $scope.initializeFullCalendar()
     $scope.initializeUIComponents()
