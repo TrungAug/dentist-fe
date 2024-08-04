@@ -172,7 +172,7 @@ app
         };
     })
     .service('API', function () {
-        const baseUrl = 'https://dentist-dev-production.up.railway.app/api/v1/auth';
+        const baseUrl = 'dentist-dev-production.up.railway.app/api/v1/auth';
 
         return {
             getBaseUrl: function () {
