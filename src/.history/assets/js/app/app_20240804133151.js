@@ -172,6 +172,8 @@ app
         };
     })
     .service('API', function () {
+        // const baseUrl = 'https://dentist-dev-production.up.railway.app/api/v1/auth';
+        // console.log("process.env.BASE_URL", process.env.BASE_URL);
         const baseUrl = window.__env.BASE_URL;
         console.log("window.__env.BASE_URL", baseUrl);
         return {

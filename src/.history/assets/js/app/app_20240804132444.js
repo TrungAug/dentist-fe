@@ -109,7 +109,7 @@ app.config(function ($routeProvider) {
             data: { title: 'Vật tư nha khoa' }
         })
         .when("/admin/save-dental-supplies", {
-            templateUrl: "templates/admin-save-dental-supplies.html",
+            templateUrl: "templates/admin-save-dental-supplies.html",           
         })
         .when("/admin/distribution-supplies", {
             templateUrl: "templates/admin-list-distribution-supplies.html",
@@ -172,8 +172,9 @@ app
         };
     })
     .service('API', function () {
-        const baseUrl = window.__env.BASE_URL;
-        console.log("window.__env.BASE_URL", baseUrl);
+        const baseUrl = 'https://dentist-dev-production.up.railway.app/api/v1/auth';
+        console.log("process.env.BASE_URL",process.env.BASE_URL);
+        
         return {
             getBaseUrl: function () {
                 return baseUrl;
@@ -249,22 +250,22 @@ app
         };
 
     })
-    .service('adminBreadcrumbService', function ($location, $route) {
-        this.getTitleForUrl = function (url) {
-            var route = $route.routes[url];
-            return route && route.data && route.data.title || 'Default Title';
+    .service('adminBreadcrumbService', function($location, $route) {    
+        this.getTitleForUrl = function(url) {
+          var route = $route.routes[url];
+          return route && route.data && route.data.title || 'Default Title';
         };
 
-        this.generateBreadcrumb = function () {
-            let currentUrl = $location.url();
-            let breadcrumbSec = $(".breadcrumb");
-            let pageTitle = this.getTitleForUrl(currentUrl);
-
-            breadcrumbSec.empty();
-            breadcrumbSec.append(`<li class="breadcrumb-item"><a href="#"><i class="fe fe-home fe-16"></i> Trang chủ</a></li>`);
-            breadcrumbSec.append(`<li class="breadcrumb-item"><a href="#!` + currentUrl + `">` + pageTitle + `</a></li>`);
+        this.generateBreadcrumb = function() {
+          let currentUrl = $location.url();
+          let breadcrumbSec = $(".breadcrumb");
+          let pageTitle = this.getTitleForUrl(currentUrl);
+      
+          breadcrumbSec.empty(); 
+          breadcrumbSec.append(`<li class="breadcrumb-item"><a href="#"><i class="fe fe-home fe-16"></i> Trang chủ</a></li>`);
+          breadcrumbSec.append(`<li class="breadcrumb-item"><a href="#!` + currentUrl + `">` + pageTitle + `</a></li>`);
         };
-    });
+      });
 app
     .filter('truncateWordsHTML', function () {
         return function (input, limit) {
